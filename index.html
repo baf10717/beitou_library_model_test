@@ -82,16 +82,12 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 
 <h1>北投圖書館建模測試</h1>
 <p class="lead">兩天，AI 做出可轉、可剖、可看進室內的北投圖書館模型。使用者不會 Blender、沒寫程式，只用審圖的話下指示。<br>過程：找齊照片圖說 → 建量體 → 校正比例 → 補細部與材質 → 依剖面建室內 → 照問題截圖合理化並精簡。</p>
+<p class="note"><b>接手的是前期既有建築建模</b>：蒐集圖說照片、搭出量體與室內、產出簡報與檢討用的三維模型。過去這段要外包測繪或同事花數天。<b>不能接手</b>：測繪、結構與法規計算、施工圖。尺寸為圖說與照片推估。</p>
 
 <div class="figs">
   <div><b>2</b><span>天</span></div>
   <div><b>5</b><span>個版本</span></div>
   <div><b>1,627</b><span>字　使用者輸入的全部文字</span></div>
-</div>
-  <div><b>5</b><span>個版本</span></div>
-  <div><b>1,627</b><span>字的指示</span></div>
-  <div><b>43</b><span>則，13 則只打「繼續」</span></div>
-  <div><b>0</b><span>行使用者寫的程式</span></div>
 </div>
 
 <div class="viewer">
@@ -155,49 +151,35 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>第一版北立面</b></figcaption></figure>
 </div>
 
-<p class="note">可討論量體、動線與剖面。非實測、非施工模型，尺寸多為推估。內網照片與地圖截圖未上傳。</p>
-
-<h2>操作步驟：使用者實際輸入的每一句</h2>
-<p class="note">左欄為逐字原話。</p>
+<h2>使用者說了什麼</h2>
+<p class="note">左欄為逐字原話。全部指示 1,627 字。</p>
 <div class="tw">
 <table>
-<thead><tr><th>時間</th><th class="say">使用者輸入</th><th class="wrap">結果</th></tr></thead>
+<thead><tr><th class="say">使用者輸入</th><th class="wrap">結果</th></tr></thead>
 <tbody>
-<tr><td>09-08 10:24</td>
-  <td class="say">使用blender 建立建築物本身的模型(主要) 及周邊環境(次要)<br>（並指定公司作品庫瀏覽工具為照片來源）</td>
+<tr>  <td class="say">使用blender 建立建築物本身的模型(主要) 及周邊環境(次要)<br>（並指定公司作品庫瀏覽工具為照片來源）</td>
   <td class="wrap">沒有尺寸、沒有構件清單。AI 自己找出 92 張照片、查到地址與座標，建出第一版。</td></tr>
-<tr><td>09-08 10:27</td>
-  <td class="say">你有障礙的話 你就去讀腳本 判斷搜尋規則</td>
+<tr>  <td class="say">你有障礙的話 你就去讀腳本 判斷搜尋規則</td>
   <td class="wrap">桌面操作被安全檢查擋下，改去讀那個工具的原始碼取得照片。</td></tr>
-<tr><td>09-08 13:44</td>
-  <td class="say">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到</td>
+<tr>  <td class="say">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到</td>
   <td class="wrap">第一版退回，並指出還有沒用到的資料。</td></tr>
-<tr><td>09-08 13:47</td>
-  <td class="say">你自己判斷 是修改比較合理 還是重做比較合理</td>
+<tr>  <td class="say">你自己判斷 是修改比較合理 還是重做比較合理</td>
   <td class="wrap">技術決定交回去。它選擇重做量體。</td></tr>
-<tr><td>09-08 14:37</td>
-  <td class="say">相對關係 你應該可以看得到 比例不要失真即可</td>
+<tr>  <td class="say">相對關係 你應該可以看得到 比例不要失真即可</td>
   <td class="wrap">先講清楚容許誤差，才不會白做。</td></tr>
-<tr><td>09-08 14:47</td>
-  <td class="say">你要先確定 整個量體 在google map 3D 上看的比例是正確的 再來刻這些細節</td>
+<tr>  <td class="say">你要先確定 整個量體 在google map 3D 上看的比例是正確的 再來刻這些細節</td>
   <td class="wrap">定下工作順序。第二版用航照做 7 點配準，過程中自己抓出先前把地圖比例尺讀錯。</td></tr>
-<tr><td>09-08 19:52</td>
-  <td class="say">隨便找都有平面與立面圖、剖面圖 我只是舉例</td>
+<tr>  <td class="say">隨便找都有平面與立面圖、剖面圖 我只是舉例</td>
   <td class="wrap">給一個連結當範例，其餘自己找。第三版加入木構、窗帶、遮棚與材質。</td></tr>
-<tr><td>09-08 20:16</td>
-  <td class="say">玻璃應該是透明的</td>
+<tr>  <td class="say">玻璃應該是透明的</td>
   <td class="wrap">一句話。</td></tr>
-<tr><td>09-09 08:44</td>
-  <td class="say">平面、剖面、立面 應該已經足以讓你建立相對正確的內部空間與立面細節<br>（附一層平面與 A／B 剖面截圖，未標任何尺寸）</td>
+<tr>  <td class="say">平面、剖面、立面 應該已經足以讓你建立相對正確的內部空間與立面細節<br>（附一層平面與 A／B 剖面截圖，未標任何尺寸）</td>
   <td class="wrap">第四版定出樓層標高 0／3.60／7.20 公尺，建出挑空、雙跑樓梯、室內分間與家具。</td></tr>
-<tr><td>09-09 20:08</td>
-  <td class="say">有些地方還有破面、有些明顯衝突、或欄杆等明顯有缺<br>你必須用剖面檢視 或進去裡面漫遊檢視 看還有些不合使用常理的局部 將其修正至合理化</td>
+<tr>  <td class="say">有些地方還有破面、有些明顯衝突、或欄杆等明顯有缺<br>你必須用剖面檢視 或進去裡面漫遊檢視 看還有些不合使用常理的局部 將其修正至合理化</td>
   <td class="wrap">像審圖一樣挑毛病，並附 6 張問題截圖。第五版逐項修正主梯、屋面、外牆與步道。</td></tr>
-<tr><td>09-09 20:08</td>
-  <td class="say">你應該把每一本書 建立了一個物件 造成現在模型過大 有些數量太多的物件 可以適當簡化</td>
+<tr>  <td class="say">你應該把每一本書 建立了一個物件 造成現在模型過大 有些數量太多的物件 可以適當簡化</td>
   <td class="wrap">元件量降到十分之一，檔案 7.8 MB → 3.6 MB，形體維持原樣。</td></tr>
-<tr><td>09-09 20:11</td>
-  <td class="say">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</td>
+<tr>  <td class="say">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</td>
   <td class="wrap">補設落地柱、邊梁與屋面承梁。</td></tr>
 </tbody>
 </table>
