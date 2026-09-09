@@ -14,9 +14,6 @@
   --bg:#ffffff; --panel:#fafafa; --panel2:#f2f2f2;
   --line:#e2e2e2; --line2:#c8c8c8;
   --ink:#1a1a1a; --ink2:#555555; --ink3:#8a8a8a;
-  --warn-bg:#fdf5e2; --warn-ink:#7a5c00; --warn-line:#e3cd8e;
-  --bad-bg:#fbeaea; --bad-ink:#8f2020; --bad-line:#e0b4b4;
-  --ok-bg:#eef0ef; --ok-ink:#3a3a3a; --ok-line:#cfd3d1;
 }
 *{box-sizing:border-box}
 body{
@@ -39,13 +36,7 @@ tr:last-child td{border-bottom:none}
 td.wrap{white-space:normal;min-width:180px}
 td.say{white-space:normal;min-width:260px;max-width:460px;color:var(--ink)}
 td.say b{font-weight:500}
-.tag{display:inline-block;padding:1px 7px;font-size:12px;line-height:1.6;
-  border:1px solid var(--ok-line);background:var(--ok-bg);color:var(--ok-ink)}
-.tag.warn{border-color:var(--warn-line);background:var(--warn-bg);color:var(--warn-ink)}
-.tag.bad{border-color:var(--bad-line);background:var(--bad-bg);color:var(--bad-ink)}
 .note{font-size:13px;color:var(--ink2);max-width:80ch}
-ul{margin:0 0 10px;padding-left:20px}
-li{margin:0 0 4px}
 
 .figs{display:flex;flex-wrap:wrap;border:1px solid var(--line);margin:0 0 18px}
 .figs div{flex:1 1 140px;padding:11px 15px;border-right:1px solid var(--line)}
@@ -162,18 +153,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>第一版北立面</b></figcaption></figure>
 </div>
 
-<h2>能用來做什麼</h2>
-<p class="note">用途限於量體與空間關係的討論、動線與剖面檢視、簡報溝通。未做結構與法規計算，不可作為實測或施工依據。樓層標高取自圖面標註；地形高程、未標尺寸構件與周邊量體屬推估；第五版的主梯、外部步道與部分梁柱屬合理化設計。</p>
-<div class="tw">
-<table>
-<thead><tr><th>項目</th><th>狀態</th><th class="wrap">說明</th></tr></thead>
-<tbody>
-<tr><td>公司內網照片與地圖截圖</td><td><span class="tag bad">未上傳</span></td><td class="wrap">92 張原始照片與 Google 航照、街景畫面只留在本機，本站僅放 Blender 自行渲染的輸出。</td></tr>
-<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序材質無法匯出 glTF，取代表色填成單色；顏色來自模型自身資料，木紋石紋不保留。材質表現以成果圖為準。</td></tr>
-<tr><td>影像年代</td><td><span class="tag warn">不一致</span></td><td class="wrap">圖面、照片與街景拍攝年代不同，不代表現況。</td></tr>
-</tbody>
-</table>
-</div>
+<p class="note">可討論量體、動線與剖面。非實測、非施工模型，尺寸多為推估。內網照片與地圖截圖未上傳。</p>
 
 <h2>操作步驟：使用者實際輸入的每一句</h2>
 <p class="note">左欄為逐字原話。</p>
@@ -222,13 +202,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </div>
 
 <h2>來源</h2>
-<ul>
-<li>公司內網作品庫 2003 年北投分館攝影，去重後 92 張。</li>
-<li>內政部建築研究所《亞熱帶的綠建築挑戰》頁 82、83：<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">長剖面、一層平面、屋頂平面</a></li>
-<li><a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典聯合建築師事務所官方作品頁</a>　·　<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札圖說</a></li>
-<li>交通部觀光署與臺灣綠建築發展協會資料頁；Google 地圖航照與街景（2018–2025）。</li>
-</ul>
-<p class="note">建模全程以 Blender 5.2 背景模式執行 Python 腳本完成，每版都留有建模與驗證腳本，可重新執行重現。</p>
+<p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。以 Blender 5.2 背景模式執行 Python 腳本建模。</p>
 
 </main>
 
