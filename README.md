@@ -1,5 +1,7 @@
 # 北投圖書館建模測試
 
+線上檢視：https://baf10717.github.io/beitou_library_model_test/
+
 以 ChatGPT Astra 進行的既有建築重建測試成果網站：四個版本的線上 3D 檢視、依據來源與精度說明。
 
 重建標的為臺北市立圖書館北投分館（九典聯合建築師事務所）。建模全程以 Blender 5.2 背景模式執行 Python 腳本完成。
