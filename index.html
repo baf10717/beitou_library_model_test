@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>北投圖書館建模測試</title>
+<meta name="description" content="以 ChatGPT Astra 進行的既有建築重建測試：四個版本的線上模型檢視、依據來源與精度說明。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#ffffff;
+  --panel:#fafafa;
+  --panel2:#f2f2f2;
+  --line:#e2e2e2;
+  --line2:#c8c8c8;
+  --ink:#1a1a1a;
+  --ink2:#555555;
+  --ink3:#8a8a8a;
+  --warn-bg:#fdf5e2; --warn-ink:#7a5c00; --warn-line:#e3cd8e;
+  --bad-bg:#fbeaea; --bad-ink:#8f2020; --bad-line:#e0b4b4;
+  --ok-bg:#eef0ef; --ok-ink:#3a3a3a; --ok-line:#cfd3d1;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.65;
+}
+code,.mono,td.mono{font-family:"Noto Sans Mono",ui-monospace,Consolas,monospace;font-size:13px}
+main{padding:28px 32px 72px}
+h1{font-size:22px;font-weight:700;margin:0 0 6px}
+h2{font-size:16px;font-weight:700;margin:38px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line2)}
+h3{font-size:14px;font-weight:500;margin:22px 0 8px;color:var(--ink2)}
+p{margin:0 0 10px;max-width:none}
+a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:#000}
+.meta{
+  display:flex;flex-wrap:wrap;gap:6px 18px;
+  font-size:13px;color:var(--ink2);
+  border:1px solid var(--line);background:var(--panel);
+  padding:8px 12px;margin:0 0 22px;
+}
+.meta b{font-weight:500;color:var(--ink)}
+.tw{overflow-x:auto;border:1px solid var(--line);margin:0 0 14px}
+table{border-collapse:collapse;width:100%;background:var(--bg)}
+th,td{
+  border-bottom:1px solid var(--line);
+  padding:7px 10px;text-align:left;vertical-align:top;white-space:nowrap;
+}
+th{background:var(--panel2);font-weight:500;font-size:13px;color:var(--ink2);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.wrap{white-space:normal;min-width:200px;max-width:460px}
+td.num{text-align:right;font-family:"Noto Sans Mono",monospace}
+.tag{
+  display:inline-block;padding:1px 7px;font-size:12px;line-height:1.6;
+  border:1px solid var(--ok-line);background:var(--ok-bg);color:var(--ok-ink);
+}
+.tag.warn{border-color:var(--warn-line);background:var(--warn-bg);color:var(--warn-ink)}
+.tag.bad{border-color:var(--bad-line);background:var(--bad-bg);color:var(--bad-ink)}
+.note{font-size:13px;color:var(--ink2)}
+ul{margin:0 0 12px;padding-left:20px}
+li{margin:0 0 4px}
+
+/* 檢視器 */
+.viewer{border:1px solid var(--line2);background:var(--panel);margin:0 0 12px}
+.bar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
+  padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel2);
+}
+.bar .grp{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.bar .lbl{font-size:12px;color:var(--ink3);margin-right:2px}
+button{
+  font-family:inherit;font-size:13px;line-height:1.6;
+  padding:3px 12px;min-width:56px;
+  border:1px solid var(--line2);background:var(--bg);color:var(--ink);cursor:pointer;
+}
+button:hover{background:var(--panel2)}
+button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.stage{position:relative;height:min(68vh,620px);min-height:360px;background:#eceded}
+.stage canvas{display:block;width:100%;height:100%}
+.status{
+  position:absolute;left:0;right:0;top:0;bottom:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--ink2);background:#eceded;pointer-events:none;
+}
+.status[hidden]{display:none!important}
+.layers{
+  display:flex;flex-wrap:wrap;gap:4px 16px;
+  padding:8px 10px;border-top:1px solid var(--line);background:var(--panel2);
+  font-size:13px;
+}
+.layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.layers .cnt{color:var(--ink3);font-family:"Noto Sans Mono",monospace;font-size:12px}
+.hint{font-size:12px;color:var(--ink3);margin:0 0 24px}
+
+/* 圖廊 */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin:0 0 14px}
+.gal figure{margin:0;border:1px solid var(--line)}
+.gal img{display:block;width:100%;height:auto;background:var(--panel2)}
+.gal figcaption{padding:6px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
+.gal figcaption b{font-weight:500;color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+
+<h1>北投圖書館建模測試</h1>
+<div class="meta">
+  <span><b>測試對象</b> ChatGPT Astra 建模能力</span>
+  <span><b>重建標的</b> 臺北市立圖書館北投分館（九典聯合建築師事務所）</span>
+  <span><b>版本</b> 4</span>
+  <span><b>建模工具</b> Blender 5.2 背景模式</span>
+  <span><b>期間</b> 2026-09-08 至 2026-09-09</span>
+</div>
+
+<h2>一、測試說明</h2>
+<p>本案用來檢驗 ChatGPT Astra 在既有建築重建上的實際能力：能否自行蒐集參考資料、把不同來源（照片、圖說、航照、街景）互相配準、發現並修正自己的判讀錯誤，以及在資料不足時誠實標示不確定範圍。</p>
+<p>全程以 Blender 背景模式執行 Python 腳本建模，不使用圖形介面手動拉點。每一版都留下建模腳本、驗證腳本與檢核結果，可重新執行重現模型。材質全部使用內嵌程序節點，模型開啟不依賴外部貼圖或網路。</p>
+
+<h3>觀察到的四項能力</h3>
+<div class="tw">
+<table>
+<thead><tr><th>項目</th><th>證據</th><th class="wrap">說明</th></tr></thead>
+<tbody>
+<tr>
+  <td>跨來源配準</td><td><span class="tag">V</span></td>
+  <td class="wrap">第二版以屋頂平面與航照取 7 個可辨認交點做旋轉、平移、等比縮放，均方根殘差約 9 像素；第四版平面以相似變換配準，與第三版保留外殼的均方根殘差約 0.81 公尺。</td>
+</tr>
+<tr>
+  <td>自我除錯</td><td><span class="tag">V</span></td>
+  <td class="wrap">第二版自行發現並更正先前的地圖比例尺誤讀（5 公尺白線端點 x=763..828 共 65 像素，非原判讀的 78 像素）；第三版修正屋面谷線與跨坡折欄杆；第四版把玻璃改為非金屬薄壁透射材質，修正室內看不透的問題。</td>
+</tr>
+<tr>
+  <td>限制揭露</td><td><span class="tag">V</span></td>
+  <td class="wrap">Google Maps 3D 載入影像沒有可讀的建築立面，此限制被明確記錄而非略過，高度改由剖面與照片推定。第四版街景後段四張截圖因連線中斷未取得節點網址，紀錄中明確保留空值而非補寫。</td>
+</tr>
+<tr>
+  <td>精度自陳</td><td><span class="tag">V</span></td>
+  <td class="wrap">每一版都聲明尺寸屬估讀、非實測或施工模型，並區分哪些構件有圖面根據、哪些屬照片推估。第二版另註明模型公尺數只是統一尺度，最低樓板至屋頂高度不等同官方以地面為基準的建築高度。</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>二、線上模型檢視</h2>
+<div class="viewer">
+  <div class="bar">
+    <div class="grp"><span class="lbl">版本</span>
+      <button type="button" data-ver="v1">第一版</button>
+      <button type="button" data-ver="v2">第二版</button>
+      <button type="button" data-ver="v3">第三版</button>
+      <button type="button" data-ver="v4" aria-pressed="true">第四版</button>
+    </div>
+    <div class="grp"><span class="lbl">視角</span>
+      <button type="button" data-view="north">北</button>
+      <button type="button" data-view="south">南</button>
+      <button type="button" data-view="east">東</button>
+      <button type="button" data-view="top">俯視</button>
+      <button type="button" data-view="iso">斜視</button>
+    </div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="status" id="status">載入中</div>
+  </div>
+  <div class="layers" id="layers"></div>
+</div>
+<p class="hint">拖曳旋轉，滾輪縮放，右鍵拖曳平移。關閉「屋頂」「地形」等圖層可看見室內樓梯與挑空。線上模型為 glTF 匯出版，材質簡化為單色，材質表現請看下方渲染圖。</p>
+
+<h2>三、四版差異</h2>
+<div class="tw">
+<table>
+<thead>
+<tr><th>版本</th><th>交付檔</th><th class="wrap">主要依據</th><th class="wrap">修正重點</th><th>三角面</th><th>模型量</th><th>檢核</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>第一版</td><td class="mono">checked/beitou_library.blend</td>
+  <td class="wrap">公司內網作品庫照片 92 張（鳥瞰、北向立面、陽台、南面服務塔、東端玻璃）；觀光署與綠建築協會的公開基本資料。</td>
+  <td class="wrap">純照片推估外觀。三視角檢查後修正溪流河槽遮蔽、補齊西側北面木掛板背牆、調整南側取景。</td>
+  <td class="num">50,002</td><td class="num">3,202 物件</td>
+  <td><span class="tag">V 重新開檔</span></td>
+</tr>
+<tr>
+  <td>第二版</td><td class="mono">v2/integrated_mass.blend</td>
+  <td class="wrap">內政部建築研究所《亞熱帶的綠建築挑戰》長剖面、一層與屋頂平面；九典官方立面與鳥瞰照片；Google 航照與 2018／2022 街景全景。</td>
+  <td class="wrap">主體由近矩形改為楔形；分開建立北側光電屋頂、南側三角綠屋頂與西端陡降屋頂；服務核心順南側斜邊排列。修正地圖比例尺誤讀。</td>
+  <td class="num">1,860</td><td class="num">簡化量體</td>
+  <td><span class="tag">V 7 點配準</span></td>
+</tr>
+<tr>
+  <td>第三版</td><td class="mono">v3/beitou_library_v3.blend</td>
+  <td class="wrap">Forgemind 準建手札全文圖說（一層平面、東南立面、剖面、牆剖）；前述剖面與平面；九典官方竣工照片。</td>
+  <td class="wrap">校正主坡與樓層比例後加入細部：頂層窗帶與簷下高窗、木柱橫梁斜撐、核心拆分、東側通高玻璃。設定程序木紋、玻璃、石材、金屬、光電板材質。</td>
+  <td class="num">97,099</td><td class="num">8 集合</td>
+  <td><span class="tag">V 比例與雜湊</span></td>
+</tr>
+<tr>
+  <td>第四版</td><td class="mono">v4/beitou_library_v4.blend</td>
+  <td class="wrap">使用者提供的一層平面與 A／B 剖面（標高 −330／+30／+390 公分）；完整 92 張原始照片；2019／2025 可導航街景。</td>
+  <td class="wrap">標高定為 0／3.60／7.20 公尺，屋面最高點約 14.26 公尺。加入挑空、S01 雙跑樓梯、S02 轉折主梯（每層 24 階、每階 15 公分）、S03 核心直梯、一層分間、家具書架。玻璃改薄壁透射。</td>
+  <td class="num">190,179</td><td class="num">15,462 網格物件</td>
+  <td><span class="tag">V 幾何檢核 12 項</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="note">第二版目錄另有 <code>beitou_library_v2.blend</code>，是尚未套用量體修正的細節草稿，不列為交付版本；第三版即由 <code>integrated_mass.blend</code> 另存後細化。</p>
+
+<h2>四、渲染輸出</h2>
+<h3>第四版</h3>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北側外觀"><figcaption><b>北側外觀</b>　臨溪立面、連續陽台與水平百葉</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_south.webp" alt="第四版南側入口"><figcaption><b>南側入口</b>　服務塔、入口棚與圓池</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_glass.webp" alt="第四版臨窗玻璃"><figcaption><b>臨窗玻璃</b>　薄壁透射材質驗證，可見室內</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_atrium.webp" alt="第四版挑空與主梯"><figcaption><b>挑空與主梯</b>　S02 轉折主梯與 V 形鋼構</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_reading.webp" alt="第四版二層閱覽區"><figcaption><b>二層閱覽區</b>　閱覽桌椅與書架配置</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_plan.webp" alt="第四版一層剖切俯視"><figcaption><b>一層平面</b>　零點以上 4.85 公尺裁切</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_section.webp" alt="第四版剖面空間"><figcaption><b>剖面空間</b>　裁除上部屋面的空間檢查</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_site.webp" alt="第四版基地與道路"><figcaption><b>基地關係</b>　溪流、道路與周邊參考量體</figcaption></figure>
+</div>
+
+<h3>第三版</h3>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北側"><figcaption><b>北側</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_south.webp" alt="第三版南側"><figcaption><b>南側</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_north_elevation.webp" alt="第三版北立面"><figcaption><b>北立面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_top.webp" alt="第三版屋頂俯視"><figcaption><b>屋頂俯視</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_compare_north.webp" alt="第二版與第三版北向比較"><figcaption><b>北向比較</b>　左為第二版量體，右為第三版</figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_compare_south.webp" alt="第二版與第三版南向比較"><figcaption><b>南向比較</b>　左為第二版量體，右為第三版</figcaption></figure>
+</div>
+
+<h3>第二版</h3>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北側量體"><figcaption><b>北側量體</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_south.webp" alt="第二版南側量體"><figcaption><b>南側量體</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_north_elevation.webp" alt="第二版北立面量體"><figcaption><b>北立面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_top.webp" alt="第二版屋頂量體"><figcaption><b>屋頂俯視</b></figcaption></figure>
+</div>
+
+<h3>第一版</h3>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版東北向"><figcaption><b>東北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>北立面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_south.webp" alt="第一版南側"><figcaption><b>南側</b></figcaption></figure>
+</div>
+
+<h2>五、精度與資料界線</h2>
+<div class="tw">
+<table>
+<thead><tr><th>項目</th><th>狀態</th><th class="wrap">說明</th></tr></thead>
+<tbody>
+<tr><td>樓層標高</td><td><span class="tag">圖面標註</span></td><td class="wrap">0／3.60／7.20 公尺，取自使用者提供的 A／B 剖面。</td></tr>
+<tr><td>平面配準</td><td><span class="tag">相似變換</span></td><td class="wrap">與第三版保留外殼的均方根殘差約 0.81 公尺，局部接縫已調整。</td></tr>
+<tr><td>未標尺寸構件</td><td><span class="tag warn">推估</span></td><td class="wrap">地形高程、橋梁位置、家具與周邊量體由圖面、照片與街景推估。</td></tr>
+<tr><td>整體性質</td><td><span class="tag warn">非實測</span></td><td class="wrap">不是實測成果，也不是施工模型；未進行地籍或測量坐標套合。</td></tr>
+<tr><td>影像年代</td><td><span class="tag warn">不一致</span></td><td class="wrap">圖面、照片與街景拍攝年代不同，影像日期不代表現況。</td></tr>
+<tr><td>公司內網照片</td><td><span class="tag bad">未上傳</span></td><td class="wrap">作品庫 92 張原始照片僅保存本機作為建模參考，未進入本網站與版本庫。</td></tr>
+<tr><td>地圖與街景截圖</td><td><span class="tag bad">未上傳</span></td><td class="wrap">Google 航照與街景畫面、外部刊載圖說僅本機參考，本網站只放 Blender 自行渲染的輸出。</td></tr>
+<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序節點材質無法匯出 glTF，線上檢視為單色近似；材質表現以渲染圖為準。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>六、參考來源</h2>
+<ul>
+<li>內政部建築研究所《亞熱帶的綠建築挑戰》，印刷頁 82、83（長剖面、一層平面、屋頂平面）：<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">PDF</a></li>
+<li>九典聯合建築師事務所官方作品頁：<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">北投分館</a></li>
+<li>FAM 準建築人手札（一層平面、東南立面、剖面、牆剖圖說）：<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">報導全文</a></li>
+<li>交通部觀光署：臺北市北投區光明路 251 號；121.50637／25.136524；地上二層、地下一層。<a href="https://www.tad.gov.tw/m1.aspx?id=A12-00254&amp;sNo=0001016" rel="noopener">資料頁</a></li>
+<li>臺灣綠建築發展協會：建築面積 802.87 平方公尺；鋼骨、RC 及木構。<a href="https://www.taiwangbc.org.tw/tw/modules/news/article.php?storyid=86" rel="noopener">資料頁</a></li>
+<li>Google 地圖航照、街景服務與 360 度相片（2018-04、2019-08、2022-07、2025-03）。</li>
+</ul>
+
+</main>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const stage = document.getElementById('stage');
+const statusEl = document.getElementById('status');
+const layersEl = document.getElementById('layers');
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xeceded);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(-1, 2.2, 1.4);
+scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.5));
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 4000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+const draco = new DRACOLoader();
+draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/gltf/');
+const loader = new GLTFLoader();
+loader.setDRACOLoader(draco);
+
+let current = null;
+let center = new THREE.Vector3();
+let radius = 30;
+let fitDist = 60;
+let lastDir = 'iso';
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+function tidyName(raw) {
+  return raw.replace(/^V\d+_/, '').replace(/^\d+_/, '');
+}
+
+function buildLayers(root) {
+  layersEl.textContent = '';
+  const parts = root.children.filter(o => o.type !== 'Object3D' || o.children.length || o.isMesh);
+  const single = parts.length === 1;
+  for (const obj of parts) {
+    let faces = 0;
+    obj.traverse(n => { if (n.isMesh && n.geometry.index) faces += n.geometry.index.count / 3; });
+    const label = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = true;
+    cb.addEventListener('change', () => { obj.visible = cb.checked; });
+    label.append(cb, document.createTextNode(single ? '全部量體' : tidyName(obj.name)));
+    const cnt = document.createElement('span');
+    cnt.className = 'cnt';
+    cnt.textContent = Math.round(faces).toLocaleString('en-US');
+    label.appendChild(cnt);
+    layersEl.appendChild(label);
+  }
+}
+
+function setView(dir) {
+  lastDir = dir;
+  const d = {
+    north: [0, 0.34, 1], south: [0, 0.34, -1], east: [1, 0.34, 0],
+    top: [0.001, 1, 0.001], iso: [0.85, 0.70, 1],
+  }[dir] || [0.85, 0.70, 1];
+  const v = new THREE.Vector3(...d).normalize().multiplyScalar(fitDist);
+  camera.position.copy(center).add(v);
+  controls.target.copy(center);
+  controls.update();
+}
+
+// 取景以建築本體為準，地形與植栽不納入，否則建築在大片基地中過小
+const SITE_PART = /地形|基地|周邊|植栽/;
+
+function focusBox(root) {
+  const inner = new THREE.Box3();
+  let any = false;
+  for (const obj of root.children) {
+    if (SITE_PART.test(obj.name)) continue;
+    inner.expandByObject(obj);
+    any = true;
+  }
+  return any && !inner.isEmpty() ? inner : new THREE.Box3().setFromObject(root);
+}
+
+// 依包圍盒與畫面比例算出容納模型的距離；水平取對角線，旋轉時不會被裁切
+function computeFit(box) {
+  const size = box.getSize(new THREE.Vector3());
+  const half = THREE.MathUtils.degToRad(camera.fov / 2);
+  const byHeight = (size.y / 2) / Math.tan(half);
+  const byWidth = (Math.hypot(size.x, size.z) / 2) / Math.tan(half) / camera.aspect;
+  return Math.max(byHeight, byWidth, 1) * 1.25;
+}
+
+function load(tag) {
+  statusEl.hidden = false;
+  statusEl.textContent = '載入中';
+  loader.load('models/' + tag + '.glb', gltf => {
+    if (current) {
+      scene.remove(current);
+      current.traverse(n => {
+        if (n.isMesh) { n.geometry.dispose(); [].concat(n.material).forEach(m => m.dispose()); }
+      });
+    }
+    current = gltf.scene;
+    current.traverse(n => {
+      if (n.isMesh && n.material) {
+        [].concat(n.material).forEach(m => { m.side = THREE.DoubleSide; });
+      }
+    });
+    scene.add(current);
+
+    const box = focusBox(current);
+    box.getCenter(center);
+    radius = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 1);
+    fitDist = computeFit(box);
+    camera.near = radius / 400;
+    camera.far = radius * 60;
+    camera.updateProjectionMatrix();
+    controls.minDistance = radius * 0.03;
+    controls.maxDistance = radius * 12;
+
+    buildLayers(current);
+    setView('iso');
+    statusEl.hidden = true;
+  }, xhr => {
+    if (xhr.total) statusEl.textContent = '載入中 ' + Math.round(xhr.loaded / xhr.total * 100) + '%';
+  }, () => {
+    statusEl.hidden = false;
+    statusEl.textContent = '模型載入失敗';
+  });
+}
+
+for (const btn of document.querySelectorAll('[data-ver]')) {
+  btn.addEventListener('click', () => {
+    for (const b of document.querySelectorAll('[data-ver]')) b.setAttribute('aria-pressed', String(b === btn));
+    load(btn.dataset.ver);
+  });
+}
+for (const btn of document.querySelectorAll('[data-view]')) {
+  btn.addEventListener('click', () => setView(btn.dataset.view));
+}
+
+resize();
+load('v4');
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

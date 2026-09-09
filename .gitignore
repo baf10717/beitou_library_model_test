@@ -1,0 +1,6 @@
+# 建模原始檔與內部參考不進版本庫
+*.blend
+*.blend1
+../beitou_library/
+node_modules/
+Thumbs.db
