@@ -324,9 +324,7 @@ loader.setDRACOLoader(draco);
 let current = null;
 let center = new THREE.Vector3();
 let radius = 30;
-let fitDist = 60;
 let focusB = null;
-let lastDir = 'iso';
 
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
@@ -334,7 +332,6 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
-  if (focusB) fitDist = computeFit(focusB);
 }
 addEventListener('resize', resize);
 
@@ -363,14 +360,38 @@ function buildLayers(root) {
   }
 }
 
-function setView(dir) {
-  lastDir = dir;
-  const d = {
-    north: [0, 0.34, 1], south: [0, 0.34, -1], east: [1, 0.34, 0],
-    top: [0.001, 1, 0.001], iso: [0.85, 0.70, 1],
-  }[dir] || [0.85, 0.70, 1];
-  const v = new THREE.Vector3(...d).normalize().multiplyScalar(fitDist);
-  camera.position.copy(center).add(v);
+const VIEW_DIR = {
+  north: [0, 0.34, 1], south: [0, 0.34, -1], east: [1, 0.34, 0],
+  top: [0.001, 1, 0.001], iso: [0.85, 0.62, 1],
+};
+
+// 把包圍盒八個角點投影到該視角的相機平面，取剛好容納全部角點的距離
+function fitForDir(box, dir) {
+  const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
+  const hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
+  const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir);
+  if (right.lengthSq() < 1e-8) right.set(1, 0, 0);
+  right.normalize();
+  const up = new THREE.Vector3().crossVectors(dir, right).normalize();
+  const c = box.getCenter(new THREE.Vector3());
+  const p = new THREE.Vector3();
+  let need = 0;
+  for (let i = 0; i < 8; i++) {
+    p.set(i & 1 ? box.max.x : box.min.x,
+          i & 2 ? box.max.y : box.min.y,
+          i & 4 ? box.max.z : box.min.z).sub(c);
+    const depth = p.dot(dir);
+    need = Math.max(need,
+      Math.abs(p.dot(right)) / Math.tan(hHalf) + depth,
+      Math.abs(p.dot(up)) / Math.tan(vHalf) + depth);
+  }
+  return Math.max(need, 1) * 1.06;
+}
+
+function setView(name) {
+  if (!focusB) return;
+  const dir = new THREE.Vector3(...(VIEW_DIR[name] || VIEW_DIR.iso)).normalize();
+  camera.position.copy(center).addScaledVector(dir, fitForDir(focusB, dir));
   controls.target.copy(center);
   controls.update();
 }
@@ -387,14 +408,6 @@ function focusBox(root) {
     any = true;
   }
   return any && !inner.isEmpty() ? inner : new THREE.Box3().setFromObject(root);
-}
-
-// 以包圍球取景：任何旋轉角度與畫面比例下都完整容納，不會被裁切
-function computeFit(box) {
-  const sphere = box.getBoundingSphere(new THREE.Sphere());
-  const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
-  const hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
-  return Math.max(sphere.radius, 1) / Math.min(Math.sin(vHalf), Math.sin(hHalf)) * 1.05;
 }
 
 function load(tag) {
@@ -419,7 +432,6 @@ function load(tag) {
     focusB = box;
     box.getCenter(center);
     radius = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 1);
-    fitDist = computeFit(box);
     camera.near = radius / 400;
     camera.far = radius * 60;
     camera.updateProjectionMatrix();
