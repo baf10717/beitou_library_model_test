@@ -97,7 +97,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .hint{font-size:12px;color:var(--ink3);margin:0 0 24px}
 
 /* 圖廊 */
-.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin:0 0 14px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin:0 0 14px;align-items:start}
 .gal figure{margin:0;border:1px solid var(--line)}
 .gal img{display:block;width:100%;height:auto;background:var(--panel2)}
 .gal figcaption{padding:6px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
@@ -325,6 +325,7 @@ let current = null;
 let center = new THREE.Vector3();
 let radius = 30;
 let fitDist = 60;
+let focusB = null;
 let lastDir = 'iso';
 
 function resize() {
@@ -333,6 +334,7 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
+  if (focusB) fitDist = computeFit(focusB);
 }
 addEventListener('resize', resize);
 
@@ -387,13 +389,12 @@ function focusBox(root) {
   return any && !inner.isEmpty() ? inner : new THREE.Box3().setFromObject(root);
 }
 
-// 依包圍盒與畫面比例算出容納模型的距離；水平取對角線，旋轉時不會被裁切
+// 以包圍球取景：任何旋轉角度與畫面比例下都完整容納，不會被裁切
 function computeFit(box) {
-  const size = box.getSize(new THREE.Vector3());
-  const half = THREE.MathUtils.degToRad(camera.fov / 2);
-  const byHeight = (size.y / 2) / Math.tan(half);
-  const byWidth = (Math.hypot(size.x, size.z) / 2) / Math.tan(half) / camera.aspect;
-  return Math.max(byHeight, byWidth, 1) * 1.25;
+  const sphere = box.getBoundingSphere(new THREE.Sphere());
+  const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
+  const hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
+  return Math.max(sphere.radius, 1) / Math.min(Math.sin(vHalf), Math.sin(hHalf)) * 1.05;
 }
 
 function load(tag) {
@@ -415,6 +416,7 @@ function load(tag) {
     scene.add(current);
 
     const box = focusBox(current);
+    focusB = box;
     box.getCenter(center);
     radius = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 1);
     fitDist = computeFit(box);
