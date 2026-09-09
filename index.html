@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>北投圖書館建模測試</title>
-<meta name="description" content="以 ChatGPT Astra 進行的既有建築重建測試：四個版本的線上模型檢視、依據來源與精度說明。">
+<meta name="description" content="用兩天、1,627 字的白話指示，讓 AI 從照片與公開圖說重建一棟既有建築。五個版本的線上模型與完整指示紀錄。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -27,31 +27,32 @@
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:14px; line-height:1.65;
+  font-size:14px; line-height:1.68;
 }
 code,.mono,td.mono{font-family:"Noto Sans Mono",ui-monospace,Consolas,monospace;font-size:13px}
 main{padding:28px 32px 72px}
-h1{font-size:22px;font-weight:700;margin:0 0 6px}
-h2{font-size:17px;font-weight:700;margin:44px 0 12px}
-h3{font-size:14px;font-weight:500;margin:22px 0 8px;color:var(--ink2)}
-p{margin:0 0 10px;max-width:none}
+h1{font-size:23px;font-weight:700;margin:0 0 6px}
+h2{font-size:17px;font-weight:700;margin:46px 0 12px}
+h3{font-size:14px;font-weight:500;margin:24px 0 8px;color:var(--ink2)}
+p{margin:0 0 11px}
 a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 a:hover{color:#000}
+.lead{font-size:15px;line-height:1.75;max-width:76ch}
 .meta{
   display:flex;flex-wrap:wrap;gap:6px 18px;
   font-size:13px;color:var(--ink2);
-  background:var(--panel);padding:9px 12px;margin:0 0 22px;
+  background:var(--panel);padding:9px 12px;margin:0 0 24px;
 }
 .meta b{font-weight:500;color:var(--ink)}
 .tw{overflow-x:auto;border:1px solid var(--line);margin:0 0 14px}
 table{border-collapse:collapse;width:100%;background:var(--bg)}
 th,td{
   border-bottom:1px solid var(--line);
-  padding:7px 10px;text-align:left;vertical-align:top;white-space:nowrap;
+  padding:8px 10px;text-align:left;vertical-align:top;white-space:nowrap;
 }
-th{background:var(--panel2);font-weight:500;font-size:13px;color:var(--ink2);white-space:nowrap}
+th{background:var(--panel2);font-weight:500;font-size:13px;color:var(--ink2)}
 tr:last-child td{border-bottom:none}
-td.wrap{white-space:normal;min-width:200px;max-width:460px}
+td.wrap{white-space:normal;min-width:200px;max-width:520px}
 td.num{text-align:right;font-family:"Noto Sans Mono",monospace}
 .tag{
   display:inline-block;padding:1px 7px;font-size:12px;line-height:1.6;
@@ -61,7 +62,26 @@ td.num{text-align:right;font-family:"Noto Sans Mono",monospace}
 .tag.bad{border-color:var(--bad-line);background:var(--bad-bg);color:var(--bad-ink)}
 .note{font-size:13px;color:var(--ink2)}
 ul{margin:0 0 12px;padding-left:20px}
-li{margin:0 0 4px}
+li{margin:0 0 5px}
+
+/* 關鍵數字 */
+.figs{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);margin:0 0 20px}
+.figs div{flex:1 1 150px;padding:12px 16px;border-right:1px solid var(--line)}
+.figs div:last-child{border-right:none}
+.figs b{display:block;font-size:22px;font-weight:700;line-height:1.25;font-family:"Noto Sans Mono",monospace}
+.figs span{font-size:12px;color:var(--ink2)}
+
+/* 使用者實際輸入 */
+.step{margin:0 0 28px}
+.step > h3{margin:0 0 4px;color:var(--ink);font-weight:700;font-size:14px}
+.when{font-size:12px;color:var(--ink3);margin:0 0 8px;font-family:"Noto Sans Mono",monospace}
+.said{
+  border-left:3px solid var(--line2);background:var(--panel);
+  padding:9px 14px;margin:0 0 7px;white-space:pre-wrap;
+  font-size:14px;line-height:1.7;
+}
+.did{font-size:13px;color:var(--ink2);margin:8px 0 0;padding-left:2px}
+.did b{color:var(--ink);font-weight:500}
 
 /* 檢視器 */
 .viewer{border:1px solid var(--line2);background:var(--panel);margin:0 0 12px}
@@ -92,7 +112,6 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   font-size:13px;
 }
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
-.layers .cnt{color:var(--ink3);font-family:"Noto Sans Mono",monospace;font-size:12px}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 24px}
 
 /* 圖廊 */
@@ -101,11 +120,13 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .gal img{display:block;width:100%;height:auto;background:var(--panel2)}
 .gal figcaption{padding:6px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
 .gal figcaption b{font-weight:500;color:var(--ink)}
+.gal.tall{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
 
 @media (max-width:640px){
   main{padding:20px 14px 56px}
   h1{font-size:19px}
-  .gal{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .gal,.gal.tall{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .figs div{flex:1 1 44%}
 }
 </style>
 </head>
@@ -114,50 +135,139 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 
 <h1>北投圖書館建模測試</h1>
 <div class="meta">
-  <span><b>測試對象</b> ChatGPT Astra 建模能力</span>
+  <span><b>測試對象</b> ChatGPT Astra 的建模能力</span>
   <span><b>重建標的</b> 臺北市立圖書館北投分館（九典聯合建築師事務所）</span>
-  <span><b>版本</b> 4</span>
-  <span><b>建模工具</b> Blender 5.2 背景模式</span>
-  <span><b>期間</b> 2026-09-08 至 2026-09-09</span>
+  <span><b>期間</b> 2026-09-08 至 09-09，兩天</span>
+  <span><b>版本</b> 5</span>
 </div>
 
-<h2>一、測試說明</h2>
-<p>本案用來檢驗 ChatGPT Astra 在既有建築重建上的實際能力：能否自行蒐集參考資料、把不同來源（照片、圖說、航照、街景）互相配準、發現並修正自己的判讀錯誤，以及在資料不足時誠實標示不確定範圍。</p>
-<p>全程以 Blender 背景模式執行 Python 腳本建模，不使用圖形介面手動拉點。每一版都留下建模腳本、驗證腳本與檢核結果，可重新執行重現模型。材質全部使用內嵌程序節點，模型開啟不依賴外部貼圖或網路。</p>
+<h2>一、這個測試在問什麼</h2>
+<p class="lead">給 AI 一棟既有建築、一批公司拍的照片、幾張網路上找得到的圖說，它能不能自己做出一個可以檢視、可以討論的三維模型？而且——使用者不寫規格書，只用建築師平常講話的方式下指示。</p>
+<p class="lead">兩天做了五個版本。過程中使用者<b>沒有開過 Blender 介面，沒有寫過一行程式，沒有畫過一條線</b>。從交付任務到第五版完成，所有指示加起來 1,627 個字，其中最長的一則 324 字。</p>
 
-<h3>觀察到的四項能力</h3>
+<div class="figs">
+  <div><b>2</b><span>天</span></div>
+  <div><b>5</b><span>個版本</span></div>
+  <div><b>43</b><span>則指示，其中 13 則只打「繼續」</span></div>
+  <div><b>1,627</b><span>字，全部指示的總字數</span></div>
+  <div><b>0</b><span>行使用者寫的程式碼</span></div>
+</div>
+
+<h2>二、使用者實際輸入了什麼</h2>
+<p class="lead">以下依時間順序，全部是逐字原文、未經修飾（僅略去安裝軟體、確認檔案位置這類事務性往返）。這是本頁最值得看的部分——它顯示要用 AI 建模，需要的不是新技能，而是把你原本審圖時會講的話講出來。</p>
+
+<div class="step">
+  <h3>1　交付任務：給目標與資料來源，不給規格</h3>
+  <div class="when">09-08 10:24</div>
+  <div class="said">為了測試本功能 你可以使用 D:\ListDashboard\ListDashboard.exe
+這是一個用來檢視公司作品的瀏覽工具
+你搜尋 北投圖書館的相關照片 也可以上網找相關資料 但是以前述瀏覽工具裡的照片為主
+
+你找到相關資料後 應該也能找到他的具體位置 使用blender 建立建築物本身的模型(主要) 及周邊環境(次要)</div>
+  <p class="did"><b>Astra 因此做了：</b>從公司內網作品庫取得照片、上網查到地址與經緯度、寫腳本建出第一版。整段指示裡沒有任何尺寸、構件清單或交付格式——只有「主要」與「次要」。</p>
+</div>
+
+<div class="step">
+  <h3>2　遇到障礙：指出繞路的方向，不代它解題</h3>
+  <div class="when">09-08 10:27</div>
+  <div class="said">我講的是內部網路 前述瀏覽工具 只是一個操作介面 使用本地服務器 你有障礙的話 你就去讀腳本 判斷搜尋規則</div>
+  <p class="did"><b>Astra 因此做了：</b>桌面自動化被安全檢查擋下後，改去讀那個瀏覽工具的原始碼，看懂它的 API 與搜尋規則，直接取得去重後 92 張照片。</p>
+</div>
+
+<div class="step">
+  <h3>3　第一版不合格：直接說不行，並指出還有什麼資料沒用</h3>
+  <div class="when">09-08 13:44–13:47</div>
+  <div class="said">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到
+
+你這結果差太多了</div>
+  <div class="said">以目前版本 另外再建立一版 這樣之後可以比較差異</div>
+  <div class="said">你不一定要從頭開始建 你也可以複製一個第一版 然後改成第二版 你自己判斷 是修改比較合理 還是重做比較合理</div>
+  <p class="did"><b>Astra 因此做了：</b>保留第一版不動，另存第二版；並自行判斷該從量體重做，而不是在錯的比例上修補。最後一句把技術判斷交還給它。</p>
+</div>
+
+<div class="step">
+  <h3>4　定調精度與順序：什麼可以錯、什麼不能錯、先做哪個</h3>
+  <div class="when">09-08 14:37–19:27</div>
+  <div class="said">你無法找到完整準確的圖說資料 但是至少 相對關係 你應該可以看得到 比例不要失真即可</div>
+  <div class="said">你甚至使用街景 應該也能看到更正確的比例</div>
+  <div class="said">你要先確定 整個量體 在google map 3D　上看的比例是正確的　再來刻這些細節</div>
+  <div class="said">你已經忘了網路上只到的平面、立面、剖面嗎 還有照片 你要綜合與google map 一起 做為參考</div>
+  <p class="did"><b>Astra 因此做了：</b>把屋頂平面與航照取 7 個可辨認交點做配準（均方根殘差約 9 像素）；過程中自己發現先前把地圖比例尺讀錯（5 公尺白線是 65 像素，不是原本判讀的 78），主動更正並記錄。「先確定量體再刻細節」這一句決定了後面三個版本的工作順序。</p>
+</div>
+
+<div class="step">
+  <h3>5　第三版：舉一個例子，其餘讓它自己找</h3>
+  <div class="when">09-08 19:52–20:16</div>
+  <div class="said">你有參考網頁連結? https://forgemind.net/media/...
+
+隨便找都有平面與立面圖、剖面圖
+我只是舉例
+
+第二版已經比上一版正確很多了
+但比例應該還要校正 必且增加細節 材質上 也可以有適當設定
+
+照前面的方式 以此版為基礎 另存 建立第三版</div>
+  <div class="said">玻璃應該是透明的</div>
+  <p class="did"><b>Astra 因此做了：</b>讀完該篇報導所附的平面、立面、剖面與牆剖圖說，校正比例後加入木構、窗帶、遮棚、欄杆，並設定木材、玻璃、石材、金屬與光電板材質。</p>
+</div>
+
+<div class="step">
+  <h3>6　第四版：把圖貼上去給它看</h3>
+  <div class="when">09-09 08:44</div>
+  <div class="said">最初我要你用這個工具 找北投圖書館的照片 你有將參考照片複製下來嗎? 你應該要複製
+
+網路上找到的平面、剖面、立面 應該已經足以讓你建立相對正確的內部空間與立面細節
+你也可以看到剖面關係
+
+另外材質也有問題 玻璃現在完全不透明
+在google map 上 你可以更準確的判斷 地形與基地周邊
+街景的話 我看你的操作 你實際上不是用街景模式 而是用北投圖書館找到的照片 這樣根本失去看街景的意義
+
+你需另存第四版 繼續調整與細化</div>
+  <p class="did"><b>Astra 因此做了：</b>依附上的一層平面與 A／B 剖面把樓層標高定為 0／3.60／7.20 公尺，建出挑空、雙跑樓梯（每層 24 階、每階 15 公分）、室內分間與家具；玻璃改為薄壁透射材質；補存全部 92 張原始照片；改用真正的街景模式重新核對基地。<br>這一則附了兩張截圖——使用者只是把圖貼上去，沒有標註任何尺寸。</p>
+</div>
+
+<div class="step">
+  <h3>7　第五版：像審圖一樣挑毛病，並要求瘦身</h3>
+  <div class="when">09-09 20:08–20:11</div>
+  <div class="said">現在還是有些問題 我已經截圖放在上面的資料夾中
+有些地方還有破面、有些明顯衝突、或欄杆等明顯有缺
+很多地方無法找到對應的圖紙或照片所以你無法忠實還原
+所以你現在必須用剖面檢視 或進去裡面漫遊檢視 看還你有些不合使用常理的局部 將其修正至合理化
+
+另外現在細節已經足夠 甚至過度 例如你應該把每一本書 建立了一個物件 造成現在模型過大 有些數量太多的物件 可以適當簡化
+
+另存 繼續建立第五版</div>
+  <div class="said">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</div>
+  <p class="did"><b>Astra 因此做了：</b>對照使用者放進資料夾的 6 張問題截圖逐項修正：主梯改成兩跑加中間平台、屋面改為共用頂點的連續網格、西端柱腳落地並接到簷梁、陽台懸挑梁與屋架梁端補承接。同時把逐本建立的書改為整列書列，物件數 <b>15,527 → 1,528</b>、檔案 7.8 MB → 3.6 MB，而面數只降了約四分之一。</p>
+</div>
+
+<h3>從這七個階段看到的模式</h3>
 <div class="tw">
 <table>
-<thead><tr><th>項目</th><th>證據</th><th class="wrap">說明</th></tr></thead>
+<thead><tr><th>使用者做的事</th><th class="wrap">原話</th></tr></thead>
 <tbody>
-<tr>
-  <td>跨來源配準</td><td><span class="tag">V</span></td>
-  <td class="wrap">第二版以屋頂平面與航照取 7 個可辨認交點做旋轉、平移、等比縮放，均方根殘差約 9 像素；第四版平面以相似變換配準，與第三版保留外殼的均方根殘差約 0.81 公尺。</td>
-</tr>
-<tr>
-  <td>自我除錯</td><td><span class="tag">V</span></td>
-  <td class="wrap">第二版自行發現並更正先前的地圖比例尺誤讀（5 公尺白線端點 x=763..828 共 65 像素，非原判讀的 78 像素）；第三版修正屋面谷線與跨坡折欄杆；第四版把玻璃改為非金屬薄壁透射材質，修正室內看不透的問題。</td>
-</tr>
-<tr>
-  <td>限制揭露</td><td><span class="tag">V</span></td>
-  <td class="wrap">Google Maps 3D 載入影像沒有可讀的建築立面，此限制被明確記錄而非略過，高度改由剖面與照片推定。第四版街景後段四張截圖因連線中斷未取得節點網址，紀錄中明確保留空值而非補寫。</td>
-</tr>
-<tr>
-  <td>精度自陳</td><td><span class="tag">V</span></td>
-  <td class="wrap">每一版都聲明尺寸屬估讀、非實測或施工模型，並區分哪些構件有圖面根據、哪些屬照片推估。第二版另註明模型公尺數只是統一尺度，最低樓板至屋頂高度不等同官方以地面為基準的建築高度。</td>
-</tr>
+<tr><td>給目標，不給規格</td><td class="wrap">「建立建築物本身的模型(主要) 及周邊環境(次要)」——沒有尺寸、沒有構件清單、沒有交付格式。</td></tr>
+<tr><td>指出資料在哪，不代為蒐集</td><td class="wrap">「你可以使用 D:\ListDashboard」「隨便找都有平面與立面圖 我只是舉例」。</td></tr>
+<tr><td>定義什麼算對</td><td class="wrap">「相對關係 你應該可以看得到 比例不要失真即可」——先講清楚容許誤差，才不會白做。</td></tr>
+<tr><td>規定順序</td><td class="wrap">「你要先確定 整個量體 比例是正確的 再來刻這些細節」。</td></tr>
+<tr><td>用建築語彙糾正</td><td class="wrap">量體、相對關係、比例失真、剖面關係、破面、梁柱沒有銜接、不合使用常理——都是審圖時會講的話。</td></tr>
+<tr><td>保留每一版</td><td class="wrap">「以目前版本 另外再建立一版 這樣之後可以比較差異」。</td></tr>
+<tr><td>把技術判斷交回去</td><td class="wrap">「你自己判斷 是修改比較合理 還是重做比較合理」。</td></tr>
+<tr><td>不合格就直說</td><td class="wrap">「差太多了」「這樣根本失去看街景的意義」——不需要客氣，但要指出可用而未用的資料。</td></tr>
 </tbody>
 </table>
 </div>
 
-<h2>二、線上模型檢視</h2>
+<h2>三、線上檢視五個版本</h2>
 <div class="viewer">
   <div class="bar">
     <div class="grp"><span class="lbl">版本</span>
       <button type="button" data-ver="v1">第一版</button>
       <button type="button" data-ver="v2">第二版</button>
       <button type="button" data-ver="v3">第三版</button>
-      <button type="button" data-ver="v4" aria-pressed="true">第四版</button>
+      <button type="button" data-ver="v4">第四版</button>
+      <button type="button" data-ver="v5" aria-pressed="true">第五版</button>
     </div>
     <div class="grp"><span class="lbl">視角</span>
       <button type="button" data-view="north">北</button>
@@ -172,113 +282,124 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉，滾輪縮放，右鍵拖曳平移。關閉「屋頂」「地形」等圖層可看見室內樓梯與挑空。線上模型為 glTF 匯出版，程序材質取模型本身節點的代表色填成單色，木紋、石紋等紋理變化請看下方渲染圖。</p>
+<p class="hint">拖曳旋轉，滾輪縮放，右鍵拖曳平移。關閉「屋頂」「地形與周邊」等圖層可以看進室內的樓梯與挑空。切換版本可以直接比較兩天內的演進。線上模型的材質是單色近似，材質表現請看下方渲染圖。</p>
 
-<h2>三、四版差異</h2>
+<h2>四、五個版本怎麼收斂</h2>
 <div class="tw">
 <table>
 <thead>
-<tr><th>版本</th><th>交付檔</th><th class="wrap">主要依據</th><th class="wrap">修正重點</th><th>三角面</th><th>模型量</th><th>檢核</th></tr>
+<tr><th>版本</th><th class="wrap">使用者的一句話</th><th class="wrap">這一版解決了什麼</th><th>主要依據</th></tr>
 </thead>
 <tbody>
 <tr>
-  <td>第一版</td><td class="mono">checked/beitou_library.blend</td>
-  <td class="wrap">公司內網作品庫照片 92 張（鳥瞰、北向立面、陽台、南面服務塔、東端玻璃）；觀光署與綠建築協會的公開基本資料。</td>
-  <td class="wrap">純照片推估外觀。三視角檢查後修正溪流河槽遮蔽、補齊西側北面木掛板背牆、調整南側取景。</td>
-  <td class="num">50,002</td><td class="num">3,202 物件</td>
-  <td><span class="tag">V 重新開檔</span></td>
+  <td>第一版</td>
+  <td class="wrap">建立建築物本身的模型（主要）及周邊環境（次要）</td>
+  <td class="wrap">只靠公司照片推估外觀。輪廓對了，比例不對。</td>
+  <td>照片</td>
 </tr>
 <tr>
-  <td>第二版</td><td class="mono">v2/integrated_mass.blend</td>
-  <td class="wrap">內政部建築研究所《亞熱帶的綠建築挑戰》長剖面、一層與屋頂平面；九典官方立面與鳥瞰照片；Google 航照與 2018／2022 街景全景。</td>
-  <td class="wrap">主體由近矩形改為楔形；分開建立北側光電屋頂、南側三角綠屋頂與西端陡降屋頂；服務核心順南側斜邊排列。修正地圖比例尺誤讀。</td>
-  <td class="num">1,860</td><td class="num">簡化量體</td>
-  <td><span class="tag">V 7 點配準</span></td>
+  <td>第二版</td>
+  <td class="wrap">比例不要失真即可；先確定量體再刻細節</td>
+  <td class="wrap">主體由近矩形改為楔形，屋頂分成三段。修正自己讀錯的地圖比例尺。</td>
+  <td>圖說＋航照</td>
 </tr>
 <tr>
-  <td>第三版</td><td class="mono">v3/beitou_library_v3.blend</td>
-  <td class="wrap">Forgemind 準建手札全文圖說（一層平面、東南立面、剖面、牆剖）；前述剖面與平面；九典官方竣工照片。</td>
-  <td class="wrap">校正主坡與樓層比例後加入細部：頂層窗帶與簷下高窗、木柱橫梁斜撐、核心拆分、東側通高玻璃。設定程序木紋、玻璃、石材、金屬、光電板材質。</td>
-  <td class="num">97,099</td><td class="num">8 集合</td>
-  <td><span class="tag">V 比例與雜湊</span></td>
+  <td>第三版</td>
+  <td class="wrap">比例還要校正，增加細節，材質也要設定</td>
+  <td class="wrap">加入木構、窗帶、遮棚、欄杆與各類材質。</td>
+  <td>報導圖說</td>
 </tr>
 <tr>
-  <td>第四版</td><td class="mono">v4/beitou_library_v4.blend</td>
-  <td class="wrap">使用者提供的一層平面與 A／B 剖面（標高 −330／+30／+390 公分）；完整 92 張原始照片；2019／2025 可導航街景。</td>
-  <td class="wrap">標高定為 0／3.60／7.20 公尺，屋面最高點約 14.26 公尺。加入挑空、S01 雙跑樓梯、S02 轉折主梯（每層 24 階、每階 15 公分）、S03 核心直梯、一層分間、家具書架。玻璃改薄壁透射。後續再修正北側地形高程尖刺、道路與步道貼地（離地 0.04 公尺內）及屋面缺口。</td>
-  <td class="num">214,182</td><td class="num">15,488 網格物件</td>
-  <td><span class="tag">V 幾何檢核 14 項</span></td>
+  <td>第四版</td>
+  <td class="wrap">平面、剖面應該足以讓你建立內部空間；玻璃完全不透明</td>
+  <td class="wrap">依剖面定樓層標高，建出挑空、樓梯、室內分間與家具；玻璃可透視。</td>
+  <td>使用者提供的圖</td>
+</tr>
+<tr>
+  <td>第五版</td>
+  <td class="wrap">破面、欄杆有缺、梁柱沒銜接；每一本書一個物件太多了</td>
+  <td class="wrap">依 6 張問題截圖逐項合理化：主梯、屋面、柱腳、梁端補齊；同時把過度的細節簡化，模型回到好操作的大小。</td>
+  <td>問題截圖</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p class="note">第二版目錄另有 <code>beitou_library_v2.blend</code>，是尚未套用量體修正的細節草稿，不列為交付版本；第三版即由 <code>integrated_mass.blend</code> 另存後細化。</p>
+<p class="note">第五版是唯一一次「往回做」的版本。第四版細到每一本書都是獨立元件，模型大到不好操作；第五版把重複的小件合併後，同樣的形體只剩十分之一的元件量，檔案從 7.8 MB 降到 3.6 MB，但外觀與空間沒有變粗糙。這是使用者一句「有些數量太多的物件 可以適當簡化」的結果。</p>
 
-<h2>四、渲染輸出</h2>
+<h2>五、渲染輸出</h2>
+
+<h3>第五版</h3>
+<div class="gal tall">
+  <figure><img loading="lazy" src="images/v5_preview.webp" alt="第五版十一個巡查視角總覽"><figcaption><b>巡查總覽</b>　十一個檢查視角一次看</figcaption></figure>
+</div>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b>　臨溪立面與連續陽台</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_east.webp" alt="第五版東向"><figcaption><b>東向</b>　東梯、橋頭短梯與步道</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_west.webp" alt="第五版西向"><figcaption><b>西向</b>　西端外牆封閉、支柱落地</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_roof.webp" alt="第五版屋面"><figcaption><b>屋面</b>　改為共用頂點的連續網格</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp" alt="第五版主梯平台"><figcaption><b>主梯平台</b>　兩跑加中間平台，防護連續</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_structure.webp" alt="第五版梁柱"><figcaption><b>梁柱</b>　柱腳落地、梁端有承接</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_first.webp" alt="第五版一層人眼高度"><figcaption><b>一層</b>　人眼高度巡查</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_second.webp" alt="第五版二層人眼高度"><figcaption><b>二層</b>　人眼高度巡查</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_basement.webp" alt="第五版地下層"><figcaption><b>地下層</b>　擋牆、高窗與走道照明</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_plan.webp" alt="第五版平面"><figcaption><b>平面</b>　裁切俯視</figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_section.webp" alt="第五版剖面"><figcaption><b>剖面</b>　垂直剖切</figcaption></figure>
+</div>
+
 <h3>第四版</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北側外觀"><figcaption><b>北側外觀</b>　臨溪立面、連續陽台與水平百葉</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_south.webp" alt="第四版南側入口"><figcaption><b>南側入口</b>　服務塔、入口棚與圓池</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_glass.webp" alt="第四版臨窗玻璃"><figcaption><b>臨窗玻璃</b>　薄壁透射材質驗證，可見室內</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_atrium.webp" alt="第四版挑空與主梯"><figcaption><b>挑空與主梯</b>　S02 轉折主梯與 V 形鋼構</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_reading.webp" alt="第四版二層閱覽區"><figcaption><b>二層閱覽區</b>　閱覽桌椅與書架配置</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_plan.webp" alt="第四版一層剖切俯視"><figcaption><b>一層平面</b>　零點以上 4.85 公尺裁切</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_section.webp" alt="第四版剖面空間"><figcaption><b>剖面空間</b>　裁除上部屋面的空間檢查</figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_site.webp" alt="第四版基地與道路"><figcaption><b>基地關係</b>　溪流、道路與周邊參考量體</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北側外觀"><figcaption><b>北側外觀</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_south.webp" alt="第四版南側入口"><figcaption><b>南側入口</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_glass.webp" alt="第四版臨窗玻璃"><figcaption><b>臨窗玻璃</b>　改為透射材質後可見室內</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_atrium.webp" alt="第四版挑空與主梯"><figcaption><b>挑空與主梯</b>　第五版再據此修正</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_reading.webp" alt="第四版二層閱覽區"><figcaption><b>二層閱覽區</b>　當時每本書都是獨立物件</figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_site.webp" alt="第四版基地關係"><figcaption><b>基地關係</b></figcaption></figure>
 </div>
 
-<h3>第三版</h3>
+<h3>第三版與第二版</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北側"><figcaption><b>北側</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_south.webp" alt="第三版南側"><figcaption><b>南側</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_north_elevation.webp" alt="第三版北立面"><figcaption><b>北立面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_top.webp" alt="第三版屋頂俯視"><figcaption><b>屋頂俯視</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v3_compare_north.webp" alt="第二版與第三版北向比較"><figcaption><b>北向比較</b>　左為第二版量體，右為第三版</figcaption></figure>
   <figure><img loading="lazy" src="images/v3_compare_south.webp" alt="第二版與第三版南向比較"><figcaption><b>南向比較</b>　左為第二版量體，右為第三版</figcaption></figure>
-</div>
-
-<h3>第二版</h3>
-<div class="gal">
-  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北側量體"><figcaption><b>北側量體</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_south.webp" alt="第二版南側量體"><figcaption><b>南側量體</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_north_elevation.webp" alt="第二版北立面量體"><figcaption><b>北立面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_top.webp" alt="第二版屋頂量體"><figcaption><b>屋頂俯視</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北側"><figcaption><b>第三版北側</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_top.webp" alt="第三版屋頂俯視"><figcaption><b>第三版屋頂俯視</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北側量體"><figcaption><b>第二版量體</b>　先把量體做對</figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_top.webp" alt="第二版屋頂俯視"><figcaption><b>第二版屋頂</b></figcaption></figure>
 </div>
 
 <h3>第一版</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版東北向"><figcaption><b>東北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版東北向"><figcaption><b>東北向</b>　只靠照片推估的起點</figcaption></figure>
   <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>北立面</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v1_south.webp" alt="第一版南側"><figcaption><b>南側</b></figcaption></figure>
 </div>
 
-<h2>五、精度與資料界線</h2>
+<h2>六、這個模型能用來做什麼、不能做什麼</h2>
 <div class="tw">
 <table>
 <thead><tr><th>項目</th><th>狀態</th><th class="wrap">說明</th></tr></thead>
 <tbody>
-<tr><td>樓層標高</td><td><span class="tag">圖面標註</span></td><td class="wrap">0／3.60／7.20 公尺，取自使用者提供的 A／B 剖面。</td></tr>
-<tr><td>平面配準</td><td><span class="tag">相似變換</span></td><td class="wrap">與第三版保留外殼的均方根殘差約 0.81 公尺，局部接縫已調整。</td></tr>
-<tr><td>未標尺寸構件</td><td><span class="tag warn">推估</span></td><td class="wrap">地形高程、橋梁位置、家具與周邊量體由圖面、照片與街景推估。</td></tr>
-<tr><td>整體性質</td><td><span class="tag warn">非實測</span></td><td class="wrap">不是實測成果，也不是施工模型；未進行地籍或測量坐標套合。</td></tr>
+<tr><td>可以拿來做</td><td><span class="tag">V</span></td><td class="wrap">量體與空間關係的討論、動線與剖面的檢視、簡報與溝通用的視覺化。</td></tr>
+<tr><td>不能拿來做</td><td><span class="tag bad">X</span></td><td class="wrap">不是實測成果，也不是施工模型。沒有做結構荷重或法規計算，未進行地籍或測量坐標套合。</td></tr>
+<tr><td>有圖面根據的部分</td><td><span class="tag">圖面標註</span></td><td class="wrap">樓層標高 0／3.60／7.20 公尺，取自使用者提供的 A／B 剖面。平面以相似變換配準，與前一版保留外殼的均方根殘差約 0.81 公尺。</td></tr>
+<tr><td>屬於推估的部分</td><td><span class="tag warn">推估</span></td><td class="wrap">地形高程、橋梁位置、未標尺寸構件、家具與周邊量體。第五版的主梯、外部步道與部分梁柱是合理化設計，不是聲稱實景原貌。</td></tr>
 <tr><td>影像年代</td><td><span class="tag warn">不一致</span></td><td class="wrap">圖面、照片與街景拍攝年代不同，影像日期不代表現況。</td></tr>
-<tr><td>公司內網照片</td><td><span class="tag bad">未上傳</span></td><td class="wrap">作品庫 92 張原始照片僅保存本機作為建模參考，未進入本網站與版本庫。</td></tr>
-<tr><td>地圖與街景截圖</td><td><span class="tag bad">未上傳</span></td><td class="wrap">Google 航照與街景畫面、外部刊載圖說僅本機參考，本網站只放 Blender 自行渲染的輸出。</td></tr>
-<tr><td>渲染圖版本</td><td><span class="tag warn">早於模型</span></td><td class="wrap">第四版模型後續又修正了北側地形高程尖刺、道路與步道貼地及屋面缺口。線上 3D 檢視為修正後的模型，渲染圖仍是修正前那一版的輸出，兩者的地形與屋面會有差異。</td></tr>
-<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序節點材質無法匯出 glTF。匯出時取各材質節點的代表色填成單色，顏色來自模型自身資料，但木紋、石紋等紋理變化不保留；材質表現以渲染圖為準。</td></tr>
+<tr><td>公司內網照片與地圖截圖</td><td><span class="tag bad">未上傳</span></td><td class="wrap">作品庫 92 張原始照片、Google 航照與街景畫面僅保存本機作為建模參考，未進入本網站。本站只放 Blender 自行渲染的輸出。</td></tr>
+<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序節點材質無法匯出 glTF，匯出時取各材質節點的代表色填成單色；顏色來自模型自身資料，但木紋、石紋等紋理變化不保留。</td></tr>
 </tbody>
 </table>
 </div>
 
-<h2>六、參考來源</h2>
+<h2>七、參考來源</h2>
 <ul>
-<li>內政部建築研究所《亞熱帶的綠建築挑戰》，印刷頁 82、83（長剖面、一層平面、屋頂平面）：<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">PDF</a></li>
+<li>公司內網作品庫（Portfolio Browser）2003 年北投分館攝影，去重後 92 張。</li>
+<li>內政部建築研究所《亞熱帶的綠建築挑戰》，印刷頁 82、83：<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">長剖面、一層平面、屋頂平面</a></li>
 <li>九典聯合建築師事務所官方作品頁：<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">北投分館</a></li>
-<li>FAM 準建築人手札（一層平面、東南立面、剖面、牆剖圖說）：<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">報導全文</a></li>
+<li>FAM 準建築人手札：<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">一層平面、東南立面、剖面、牆剖圖說</a></li>
 <li>交通部觀光署：臺北市北投區光明路 251 號；121.50637／25.136524；地上二層、地下一層。<a href="https://www.tad.gov.tw/m1.aspx?id=A12-00254&amp;sNo=0001016" rel="noopener">資料頁</a></li>
 <li>臺灣綠建築發展協會：建築面積 802.87 平方公尺；鋼骨、RC 及木構。<a href="https://www.taiwangbc.org.tw/tw/modules/news/article.php?storyid=86" rel="noopener">資料頁</a></li>
 <li>Google 地圖航照、街景服務與 360 度相片（2018-04、2019-08、2022-07、2025-03）。</li>
 </ul>
+<p class="note">建模全程以 Blender 5.2 背景模式執行 Python 腳本完成。每一版都留有建模腳本與驗證腳本，可重新執行重現模型；材質使用內嵌程序節點，模型開啟不依賴外部貼圖。</p>
 
 </main>
 
@@ -362,32 +483,54 @@ function setupSun(fullBox) {
   sun.shadow.normalBias = r * 0.006;
 }
 
+const LAYER_ALIAS = {
+  '屋面': '屋頂', '樓板': '樓板與基礎', '家具': '家具與設備',
+  '玻璃與門窗': '門窗', '外殼': '外牆與木構', '木構': '外牆與木構',
+  '平台與外梯': '地形與周邊', '室內樓梯': '樓梯與挑空',
+};
+
 function tidyName(raw) {
-  return raw.replace(/^V\d+_/, '').replace(/^\d+_/, '');
+  const n = raw.replace(/^V\d+_/, '').replace(/^\d+_/, '');
+  return LAYER_ALIAS[n] || n;
 }
 
 function buildLayers(root) {
   layersEl.textContent = '';
   const parts = root.children.filter(o => o.type !== 'Object3D' || o.children.length || o.isMesh);
   const single = parts.length === 1;
+  // 不同版本沿用的集合可能整理成同一個名稱，合併為一個開關
+  const groups = new Map();
   for (const obj of parts) {
-    let faces = 0;
-    obj.traverse(n => { if (n.isMesh && n.geometry.index) faces += n.geometry.index.count / 3; });
+    const name = single ? '全部量體' : tidyName(obj.name);
+    if (!groups.has(name)) groups.set(name, []);
+    groups.get(name).push(obj);
+  }
+  for (const [name, objs] of groups) {
     const label = document.createElement('label');
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.checked = true;
     cb.addEventListener('change', () => {
-      obj.visible = cb.checked;
+      for (const o of objs) o.visible = cb.checked;
       renderer.shadowMap.needsUpdate = true;
     });
-    label.append(cb, document.createTextNode(single ? '全部量體' : tidyName(obj.name)));
-    const cnt = document.createElement('span');
-    cnt.className = 'cnt';
-    cnt.textContent = Math.round(faces).toLocaleString('en-US');
-    label.appendChild(cnt);
+    label.append(cb, document.createTextNode(name));
     layersEl.appendChild(label);
   }
+}
+
+// 取景以建築本體為準，地形與植栽不納入，否則建築在大片基地中過小
+const SITE_PART = /地形|基地|周邊|植栽|平台與外梯/;
+
+function focusBox(root) {
+  const inner = new THREE.Box3();
+  let any = false;
+  for (const obj of root.children) {
+    if (SITE_PART.test(obj.name)) continue;
+    inner.expandByObject(obj);
+    any = true;
+  }
+  return any && !inner.isEmpty() ? inner : new THREE.Box3().setFromObject(root);
 }
 
 // glTF 以 Y 為上，Blender 的 +Y（北）在匯出時轉為 -Z，方位依此換算
@@ -426,20 +569,6 @@ function setView(name) {
   camera.position.copy(center).addScaledVector(dir, fitForDir(focusB, dir));
   controls.target.copy(center);
   controls.update();
-}
-
-// 取景以建築本體為準，地形與植栽不納入，否則建築在大片基地中過小
-const SITE_PART = /地形|基地|周邊|植栽/;
-
-function focusBox(root) {
-  const inner = new THREE.Box3();
-  let any = false;
-  for (const obj of root.children) {
-    if (SITE_PART.test(obj.name)) continue;
-    inner.expandByObject(obj);
-    any = true;
-  }
-  return any && !inner.isEmpty() ? inner : new THREE.Box3().setFromObject(root);
 }
 
 function load(tag) {
@@ -498,7 +627,7 @@ for (const btn of document.querySelectorAll('[data-view]')) {
 }
 
 resize();
-load('v4');
+load('v5');
 renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
 </script>
 </body>
