@@ -38,11 +38,6 @@ td.say{white-space:normal;min-width:260px;max-width:460px;color:var(--ink)}
 td.say b{font-weight:500}
 .note{font-size:13px;color:var(--ink2);max-width:80ch}
 
-.figs{display:flex;flex-wrap:wrap;border:1px solid var(--line);margin:0 0 18px}
-.figs div{flex:1 1 140px;padding:11px 15px;border-right:1px solid var(--line)}
-.figs div:last-child{border-right:none}
-.figs b{display:block;font-size:21px;font-weight:700;line-height:1.25;font-family:"Noto Sans Mono",monospace}
-.figs span{font-size:12px;color:var(--ink2)}
 
 .viewer{border:1px solid var(--line2);background:var(--panel);margin:0 0 10px}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
@@ -73,7 +68,6 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   main{padding:20px 14px 52px}
   h1{font-size:19px}
   .gal{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-  .figs div{flex:1 1 44%}
 }
 </style>
 </head>
@@ -81,14 +75,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <main>
 
 <h1>北投圖書館建模測試</h1>
-<p class="lead">兩天，AI 做出可轉、可剖、可看進室內的北投圖書館模型。使用者不會 Blender、沒寫程式，只用審圖的話下指示。<br>過程：找齊照片圖說 → 建量體 → 校正比例 → 補細部與材質 → 依剖面建室內 → 照問題截圖合理化並精簡。</p>
-<p class="note"><b>接手的是前期既有建築建模</b>：蒐集圖說照片、搭出量體與室內、產出簡報與檢討用的三維模型。過去這段要外包測繪或同事花數天。<b>不能接手</b>：測繪、結構與法規計算、施工圖。尺寸為圖說與照片推估。</p>
-
-<div class="figs">
-  <div><b>2</b><span>天</span></div>
-  <div><b>5</b><span>個版本</span></div>
-  <div><b>1,627</b><span>字　使用者輸入的全部文字</span></div>
-</div>
+<p class="lead">兩天，用講的做出這棟建築的三維模型。沒有人畫圖，沒有人寫程式——像交代事務所同事一樣講需求、看成果、再講哪裡不對，改了五輪。</p>
 
 <div class="viewer">
   <div class="bar">
@@ -112,81 +99,64 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉、滾輪縮放。關掉「屋頂」「地形與周邊」可以看進室內。</p>
+<p class="hint">手指拖曳可以轉，兩指縮放。關掉「屋頂」「地形與周邊」就能看進室內。按「第一版」看兩天前的起點。</p>
 
-
-<h2>成果圖</h2>
-
-<h3>第五版</h3>
-<div class="gal">
-  <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_east.webp" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_west.webp" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_roof.webp" alt="第五版屋面"><figcaption><b>屋面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_landing.webp" alt="第五版主梯平台"><figcaption><b>主梯平台</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_structure.webp" alt="第五版梁柱"><figcaption><b>梁柱</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_first.webp" alt="第五版一層"><figcaption><b>一層</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_second.webp" alt="第五版二層"><figcaption><b>二層</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_basement.webp" alt="第五版地下層"><figcaption><b>地下層</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_plan.webp" alt="第五版平面"><figcaption><b>平面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_section.webp" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
-</div>
-
-<h3>第四版</h3>
-<div class="gal">
-  <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北側外觀"><figcaption><b>北側外觀</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_glass.webp" alt="第四版臨窗玻璃"><figcaption><b>臨窗玻璃</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_atrium.webp" alt="第四版挑空與主梯"><figcaption><b>挑空與主梯</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_reading.webp" alt="第四版二層閱覽區"><figcaption><b>二層閱覽區</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_site.webp" alt="第四版基地關係"><figcaption><b>基地關係</b></figcaption></figure>
-</div>
-
-<h3>前三版</h3>
-<div class="gal">
-  <figure><img loading="lazy" src="images/v3_compare_north.webp" alt="第二版與第三版北向比較"><figcaption><b>第二版與第三版　北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_compare_south.webp" alt="第二版與第三版南向比較"><figcaption><b>第二版與第三版　南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北側"><figcaption><b>第三版</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版量體"><figcaption><b>第二版</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版東北向"><figcaption><b>第一版</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>第一版北立面</b></figcaption></figure>
-</div>
-
-<h2>使用者說了什麼</h2>
-<p class="note">左欄為逐字原話。全部指示 1,627 字。</p>
+<h2>能幫你做什麼</h2>
 <div class="tw">
 <table>
-<thead><tr><th class="say">使用者輸入</th><th class="wrap">結果</th></tr></thead>
 <tbody>
-<tr>  <td class="say">使用blender 建立建築物本身的模型(主要) 及周邊環境(次要)<br>（並指定公司作品庫瀏覽工具為照片來源）</td>
-  <td class="wrap">沒有尺寸、沒有構件清單。AI 自己找出 92 張照片、查到地址與座標，建出第一版。</td></tr>
-<tr>  <td class="say">你有障礙的話 你就去讀腳本 判斷搜尋規則</td>
-  <td class="wrap">桌面操作被安全檢查擋下，改去讀那個工具的原始碼取得照片。</td></tr>
-<tr>  <td class="say">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到</td>
-  <td class="wrap">第一版退回，並指出還有沒用到的資料。</td></tr>
-<tr>  <td class="say">你自己判斷 是修改比較合理 還是重做比較合理</td>
-  <td class="wrap">技術決定交回去。它選擇重做量體。</td></tr>
-<tr>  <td class="say">相對關係 你應該可以看得到 比例不要失真即可</td>
-  <td class="wrap">先講清楚容許誤差，才不會白做。</td></tr>
-<tr>  <td class="say">你要先確定 整個量體 在google map 3D 上看的比例是正確的 再來刻這些細節</td>
-  <td class="wrap">定下工作順序。第二版用航照做 7 點配準，過程中自己抓出先前把地圖比例尺讀錯。</td></tr>
-<tr>  <td class="say">隨便找都有平面與立面圖、剖面圖 我只是舉例</td>
-  <td class="wrap">給一個連結當範例，其餘自己找。第三版加入木構、窗帶、遮棚與材質。</td></tr>
-<tr>  <td class="say">玻璃應該是透明的</td>
-  <td class="wrap">一句話。</td></tr>
-<tr>  <td class="say">平面、剖面、立面 應該已經足以讓你建立相對正確的內部空間與立面細節<br>（附一層平面與 A／B 剖面截圖，未標任何尺寸）</td>
-  <td class="wrap">第四版定出樓層標高 0／3.60／7.20 公尺，建出挑空、雙跑樓梯、室內分間與家具。</td></tr>
-<tr>  <td class="say">有些地方還有破面、有些明顯衝突、或欄杆等明顯有缺<br>你必須用剖面檢視 或進去裡面漫遊檢視 看還有些不合使用常理的局部 將其修正至合理化</td>
-  <td class="wrap">像審圖一樣挑毛病，並附 6 張問題截圖。第五版逐項修正主梯、屋面、外牆與步道。</td></tr>
-<tr>  <td class="say">你應該把每一本書 建立了一個物件 造成現在模型過大 有些數量太多的物件 可以適當簡化</td>
-  <td class="wrap">元件量降到十分之一，檔案 7.8 MB → 3.6 MB，形體維持原樣。</td></tr>
-<tr>  <td class="say">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</td>
-  <td class="wrap">補設落地柱、邊梁與屋面承梁。</td></tr>
+<tr><td>既有建築改造</td><td class="wrap">沒有原始圖檔的老建築，先做出現況模型才好討論加改建。</td></tr>
+<tr><td>基地與量體</td><td class="wrap">周邊高度、退縮、臨路關係一次看清楚。</td></tr>
+<tr><td>空間與動線</td><td class="wrap">切剖面、進到室內走一圈，檢討樓梯、挑空與淨高。</td></tr>
+<tr><td>簡報</td><td class="wrap">任何角度直接出圖，不必等人排透視。</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">不能取代測繪、結構與法規計算、施工圖。尺寸是圖說與照片推估的。</p>
+
+<h2>成果圖</h2>
+<div class="gal">
+  <figure><img loading="lazy" src="images/v5_north.webp" alt="北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_east.webp" alt="東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_west.webp" alt="西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_first.webp" alt="一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp" alt="主梯"><figcaption><b>主梯</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_second.webp" alt="二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_section.webp" alt="剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_plan.webp" alt="平面"><figcaption><b>平面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版"><figcaption><b>兩天前的第一版</b>　只給了照片</figcaption></figure>
+</div>
+
+<h2>怎麼交代它</h2>
+<p class="note">左欄是原話，沒有改寫。</p>
+<div class="tw">
+<table>
+<thead><tr><th class="say">你講的話</th><th class="wrap">它做的事</th></tr></thead>
+<tbody>
+<tr><td class="say">建立建築物本身的模型(主要) 及周邊環境(次要)</td>
+    <td class="wrap">自己去公司作品庫找出 92 張照片、上網查地址與座標，做出第一版。沒有給尺寸，也沒有給構件清單。</td></tr>
+<tr><td class="say">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到</td>
+    <td class="wrap">退回重做，並自己去找出那些圖說。</td></tr>
+<tr><td class="say">相對關係 你應該可以看得到 比例不要失真即可</td>
+    <td class="wrap">知道容許誤差在哪，不會為了精確而卡住。</td></tr>
+<tr><td class="say">你要先確定 整個量體 比例是正確的 再來刻這些細節</td>
+    <td class="wrap">先用航照校正量體，再做細部。過程中自己抓出先前把地圖比例尺讀錯。</td></tr>
+<tr><td class="say">玻璃應該是透明的</td>
+    <td class="wrap">改掉材質。</td></tr>
+<tr><td class="say">平面、剖面 應該已經足以讓你建立相對正確的內部空間<br>（把圖拍給它看，沒標尺寸）</td>
+    <td class="wrap">讀出樓層標高，做出挑空、樓梯、隔間與家具。</td></tr>
+<tr><td class="say">有些地方還有破面、或欄杆等明顯有缺<br>你必須用剖面檢視 或進去裡面漫遊檢視 將其修正至合理化</td>
+    <td class="wrap">自己剖開、自己走一遍，逐項補齊。</td></tr>
+<tr><td class="say">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</td>
+    <td class="wrap">補上落地柱、邊梁與屋面承梁。</td></tr>
+<tr><td class="say">每一本書 建立了一個物件 造成現在模型過大 可以適當簡化</td>
+    <td class="wrap">把書合併成書列，模型縮到十分之一，外觀不變。</td></tr>
 </tbody>
 </table>
 </div>
 
 <h2>來源</h2>
-<p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。以 Blender 5.2 背景模式執行 Python 腳本建模。</p>
+<p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。</p>
 
 </main>
 
