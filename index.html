@@ -32,7 +32,7 @@ body{
 code,.mono,td.mono{font-family:"Noto Sans Mono",ui-monospace,Consolas,monospace;font-size:13px}
 main{padding:28px 32px 72px}
 h1{font-size:22px;font-weight:700;margin:0 0 6px}
-h2{font-size:16px;font-weight:700;margin:38px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line2)}
+h2{font-size:17px;font-weight:700;margin:44px 0 12px}
 h3{font-size:14px;font-weight:500;margin:22px 0 8px;color:var(--ink2)}
 p{margin:0 0 10px;max-width:none}
 a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
@@ -40,8 +40,7 @@ a:hover{color:#000}
 .meta{
   display:flex;flex-wrap:wrap;gap:6px 18px;
   font-size:13px;color:var(--ink2);
-  border:1px solid var(--line);background:var(--panel);
-  padding:8px 12px;margin:0 0 22px;
+  background:var(--panel);padding:9px 12px;margin:0 0 22px;
 }
 .meta b{font-weight:500;color:var(--ink)}
 .tw{overflow-x:auto;border:1px solid var(--line);margin:0 0 14px}
@@ -296,20 +295,26 @@ const layersEl = document.getElementById('layers');
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMapping = THREE.NeutralToneMapping ?? THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.78;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xeceded);
+scene.background = new THREE.Color(0xd6d9d8);
 
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.45;
 
-const sun = new THREE.DirectionalLight(0xffffff, 1.6);
-sun.position.set(-1, 2.2, 1.4);
-scene.add(sun);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.5));
+// 主光投射陰影，讓白色量體的轉折與進退可辨
+const sun = new THREE.DirectionalLight(0xffffff, 2.4);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.bias = -0.0008;
+scene.add(sun, sun.target);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.28));
 
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 4000);
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -334,6 +339,20 @@ function resize() {
   camera.updateProjectionMatrix();
 }
 addEventListener('resize', resize);
+
+// 依模型整體尺度擺放主光並框定陰影範圍
+function setupSun(fullBox) {
+  const c = fullBox.getCenter(new THREE.Vector3());
+  const r = Math.max(fullBox.getBoundingSphere(new THREE.Sphere()).radius, 1);
+  sun.position.copy(c).add(new THREE.Vector3(-0.55, 1, 0.75).normalize().multiplyScalar(r * 3));
+  sun.target.position.copy(c);
+  sun.target.updateMatrixWorld();
+  const cam = sun.shadow.camera;
+  cam.left = -r; cam.right = r; cam.top = r; cam.bottom = -r;
+  cam.near = r * 0.5; cam.far = r * 6;
+  cam.updateProjectionMatrix();
+  sun.shadow.normalBias = r * 0.006;
+}
 
 function tidyName(raw) {
   return raw.replace(/^V\d+_/, '').replace(/^\d+_/, '');
@@ -422,11 +441,16 @@ function load(tag) {
     }
     current = gltf.scene;
     current.traverse(n => {
-      if (n.isMesh && n.material) {
-        [].concat(n.material).forEach(m => { m.side = THREE.DoubleSide; });
-      }
+      if (!n.isMesh || !n.material) return;
+      const mats = [].concat(n.material);
+      mats.forEach(m => { m.side = THREE.DoubleSide; });
+      n.receiveShadow = true;
+      // 玻璃等透光面不投實心陰影，否則室內全黑
+      n.castShadow = !mats.some(m => m.transparent || m.opacity < 1 || m.transmission > 0);
     });
     scene.add(current);
+
+    setupSun(new THREE.Box3().setFromObject(current));
 
     const box = focusBox(current);
     focusB = box;
