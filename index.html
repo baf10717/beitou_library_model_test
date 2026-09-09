@@ -299,6 +299,7 @@ renderer.toneMapping = THREE.NeutralToneMapping ?? THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.78;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.autoUpdate = false;
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -311,7 +312,7 @@ scene.environmentIntensity = 0.45;
 // 主光投射陰影，讓白色量體的轉折與進退可辨
 const sun = new THREE.DirectionalLight(0xffffff, 2.4);
 sun.castShadow = true;
-sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.mapSize.set(2048, 2048);
 sun.shadow.bias = -0.0008;
 scene.add(sun, sun.target);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.28));
@@ -369,7 +370,10 @@ function buildLayers(root) {
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.checked = true;
-    cb.addEventListener('change', () => { obj.visible = cb.checked; });
+    cb.addEventListener('change', () => {
+      obj.visible = cb.checked;
+      renderer.shadowMap.needsUpdate = true;
+    });
     label.append(cb, document.createTextNode(single ? '全部量體' : tidyName(obj.name)));
     const cnt = document.createElement('span');
     cnt.className = 'cnt';
@@ -464,6 +468,7 @@ function load(tag) {
 
     buildLayers(current);
     setView('iso');
+    renderer.shadowMap.needsUpdate = true;
     statusEl.hidden = true;
   }, xhr => {
     if (xhr.total) statusEl.textContent = '載入中 ' + Math.round(xhr.loaded / xhr.total * 100) + '%';
