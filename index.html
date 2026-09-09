@@ -120,12 +120,11 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .gal img{display:block;width:100%;height:auto;background:var(--panel2)}
 .gal figcaption{padding:6px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
 .gal figcaption b{font-weight:500;color:var(--ink)}
-.gal.tall{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
 
 @media (max-width:640px){
   main{padding:20px 14px 56px}
   h1{font-size:19px}
-  .gal,.gal.tall{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .gal{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
   .figs div{flex:1 1 44%}
 }
 </style>
@@ -329,9 +328,6 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <h2>五、渲染輸出</h2>
 
 <h3>第五版</h3>
-<div class="gal tall">
-  <figure><img loading="lazy" src="images/v5_preview.webp" alt="第五版十一個巡查視角總覽"><figcaption><b>巡查總覽</b>　十一個檢查視角一次看</figcaption></figure>
-</div>
 <div class="gal">
   <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b>　臨溪立面與連續陽台</figcaption></figure>
   <figure><img loading="lazy" src="images/v5_east.webp" alt="第五版東向"><figcaption><b>東向</b>　東梯、橋頭短梯與步道</figcaption></figure>
