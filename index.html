@@ -166,7 +166,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉，滾輪縮放，右鍵拖曳平移。關閉「屋頂」「地形」等圖層可看見室內樓梯與挑空。線上模型為 glTF 匯出版，材質簡化為單色，材質表現請看下方渲染圖。</p>
+<p class="hint">拖曳旋轉，滾輪縮放，右鍵拖曳平移。關閉「屋頂」「地形」等圖層可看見室內樓梯與挑空。線上模型為 glTF 匯出版，程序材質取模型本身節點的代表色填成單色，木紋、石紋等紋理變化請看下方渲染圖。</p>
 
 <h2>三、四版差異</h2>
 <div class="tw">
@@ -258,7 +258,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <tr><td>影像年代</td><td><span class="tag warn">不一致</span></td><td class="wrap">圖面、照片與街景拍攝年代不同，影像日期不代表現況。</td></tr>
 <tr><td>公司內網照片</td><td><span class="tag bad">未上傳</span></td><td class="wrap">作品庫 92 張原始照片僅保存本機作為建模參考，未進入本網站與版本庫。</td></tr>
 <tr><td>地圖與街景截圖</td><td><span class="tag bad">未上傳</span></td><td class="wrap">Google 航照與街景畫面、外部刊載圖說僅本機參考，本網站只放 Blender 自行渲染的輸出。</td></tr>
-<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序節點材質無法匯出 glTF，線上檢視為單色近似；材質表現以渲染圖為準。</td></tr>
+<tr><td>線上模型材質</td><td><span class="tag warn">簡化</span></td><td class="wrap">程序節點材質無法匯出 glTF。匯出時取各材質節點的代表色填成單色，顏色來自模型自身資料，但木紋、石紋等紋理變化不保留；材質表現以渲染圖為準。</td></tr>
 </tbody>
 </table>
 </div>
