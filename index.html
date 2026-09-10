@@ -34,7 +34,7 @@ th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;verti
 th{background:var(--panel2);font-weight:500;font-size:13px;color:var(--ink2)}
 tr:last-child td{border-bottom:none}
 td.wrap{white-space:normal;min-width:180px}
-td.say{white-space:normal;min-width:260px;max-width:460px;color:var(--ink)}
+td.say{white-space:normal;min-width:260px;color:var(--ink)}
 td.say b{font-weight:500}
 .note{font-size:13px;color:var(--ink2)}
 .sub{color:var(--ink3);font-size:12px}
@@ -58,16 +58,14 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
-.clip{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:8px 10px;
+.clip{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 10px;
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
-.clip .cg{display:flex;align-items:center;gap:6px}
-.clip input[type=range]{width:104px;accent-color:var(--ink)}
 
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
-.gal figure{margin:0;border:1px solid var(--line)}
+.gal figure{margin:0}
 .gal img{display:block;width:100%;height:auto;background:var(--panel2);cursor:zoom-in}
-.gal figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
+.gal figcaption{padding:4px 1px 0;font-size:12px;color:var(--ink2)}
 .gal figcaption b{font-weight:500;color:var(--ink)}
 
 .lb{position:fixed;inset:0;z-index:50;background:rgba(24,24,24,.9);padding:20px;overflow:auto;
@@ -113,17 +111,12 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
     <div class="status" id="status">載入中</div>
   </div>
   <div class="clip" id="clip" hidden>
-    <div class="cg"><span class="lbl">東西</span>
-      <input type="range" id="cx0" min="0" max="100" value="0"><input type="range" id="cx1" min="0" max="100" value="100"></div>
-    <div class="cg"><span class="lbl">南北</span>
-      <input type="range" id="cz0" min="0" max="100" value="0"><input type="range" id="cz1" min="0" max="100" value="100"></div>
-    <div class="cg"><span class="lbl">上下</span>
-      <input type="range" id="cy0" min="0" max="100" value="0"><input type="range" id="cy1" min="0" max="100" value="100"></div>
+    <span class="lbl">拖曳剖面框的任一面調整範圍</span>
     <button type="button" id="clipReset">重設</button>
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉、縮放檢視。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果。選擇東西南北時會自動關閉鄰棟與植栽，避免遮擋。「剖面框」以六個界面切割模型，拖動滑桿調整範圍。</p>
+<p class="hint">拖曳旋轉、縮放檢視。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果。選擇東西南北時會自動關閉鄰棟與植栽，避免遮擋。開啟「剖面框」後，直接拖曳框的任一面即可切割模型。</p>
 
 <h2>競圖提案階段之應用</h2>
 <div class="tw">
@@ -302,48 +295,103 @@ let siteTop = 0;
 let blockers = null;   // 鄰棟與植栽，方位視角時自動關閉
 
 // 剖面框：六個裁剪面框出可見範圍，關閉時把界面推到極遠即等同不裁切，
-// 如此材質不必在開關之間重新編譯。
+// 如此材質不必在開關之間重新編譯。範圍以模型包圍盒的比例記錄，
+// 六個面各有一個可拖曳的把手，操作方式同 Revit 剖面框。
 const clipPlanes = [
   new THREE.Plane(new THREE.Vector3( 1, 0, 0)), new THREE.Plane(new THREE.Vector3(-1, 0, 0)),
   new THREE.Plane(new THREE.Vector3( 0, 1, 0)), new THREE.Plane(new THREE.Vector3( 0,-1, 0)),
   new THREE.Plane(new THREE.Vector3( 0, 0, 1)), new THREE.Plane(new THREE.Vector3( 0, 0,-1)),
 ];
+const AXES = ['x', 'y', 'z'];
 const clipEl = document.getElementById('clip');
 const boxBtn = document.getElementById('boxBtn');
-const clipInputs = ['cx0','cx1','cy0','cy1','cz0','cz1'].map(id => document.getElementById(id));
 let clipOn = false;
 let modelBox = null;
-let boxHelper = null;
+let clipFrac = [0, 1, 0, 1, 0, 1];   // 依序為 x 起訖、y 起訖、z 起訖
+
+// 框線：50% 灰虛線
+const edgeGeom = new THREE.BufferGeometry();
+edgeGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(24 * 3), 3));
+const boxEdges = new THREE.LineSegments(edgeGeom, new THREE.LineDashedMaterial({
+  color: 0x808080, dashSize: 1.2, gapSize: 0.9, depthTest: false, transparent: true,
+}));
+boxEdges.renderOrder = 3;
+boxEdges.visible = false;
+scene.add(boxEdges);
+
+// 六個面的拖曳把手，平時全透明，游標移上去才淡淡顯示
+const faceGeom = new THREE.PlaneGeometry(1, 1);
+const faces = [];
+for (let i = 0; i < 6; i++) {
+  const m = new THREE.Mesh(faceGeom, new THREE.MeshBasicMaterial({
+    color: 0x808080, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false,
+  }));
+  m.userData = { axis: i >> 1, hi: i % 2 === 1 };
+  m.visible = false;
+  m.renderOrder = 2;
+  faces.push(m);
+  scene.add(m);
+}
+
+function clipBounds() {
+  const lo = modelBox.min, hi = modelBox.max;
+  const out = [];
+  for (let a = 0; a < 3; a++) {
+    const k = AXES[a];
+    const f0 = Math.min(clipFrac[a * 2], clipFrac[a * 2 + 1]);
+    let f1 = Math.max(clipFrac[a * 2], clipFrac[a * 2 + 1]);
+    if (f1 - f0 < 0.02) f1 = Math.min(f0 + 0.02, 1);   // 留厚度，否則整個切光
+    out.push([lo[k] + (hi[k] - lo[k]) * f0, lo[k] + (hi[k] - lo[k]) * f1]);
+  }
+  return out;
+}
+
+function updateBoxVisual(b) {
+  const c = b;
+  const p = [];
+  const corner = (i, j, k) => p.push(c[0][i], c[1][j], c[2][k]);
+  // 12 條稜線
+  for (const j of [0, 1]) for (const k of [0, 1]) { corner(0, j, k); corner(1, j, k); }
+  for (const i of [0, 1]) for (const k of [0, 1]) { corner(i, 0, k); corner(i, 1, k); }
+  for (const i of [0, 1]) for (const j of [0, 1]) { corner(i, j, 0); corner(i, j, 1); }
+  edgeGeom.attributes.position.array.set(p);
+  edgeGeom.attributes.position.needsUpdate = true;
+  edgeGeom.computeBoundingSphere();
+  boxEdges.computeLineDistances();
+
+  const size = [c[0][1] - c[0][0], c[1][1] - c[1][0], c[2][1] - c[2][0]];
+  const mid = [(c[0][0] + c[0][1]) / 2, (c[1][0] + c[1][1]) / 2, (c[2][0] + c[2][1]) / 2];
+  for (const m of faces) {
+    const axis = m.userData.axis;
+    const pos = mid.slice();
+    pos[axis] = m.userData.hi ? c[axis][1] : c[axis][0];
+    m.position.set(pos[0], pos[1], pos[2]);
+    m.rotation.set(0, 0, 0);
+    if (axis === 0) { m.rotation.y = Math.PI / 2; m.scale.set(size[2], size[1], 1); }
+    else if (axis === 1) { m.rotation.x = Math.PI / 2; m.scale.set(size[0], size[2], 1); }
+    else { m.scale.set(size[0], size[1], 1); }
+  }
+}
 
 function applyClip() {
   if (!modelBox) return;
-  const lo = modelBox.min, hi = modelBox.max;
   if (!clipOn) {
     for (const pl of clipPlanes) pl.constant = 1e6;
-    if (boxHelper) boxHelper.visible = false;
+    boxEdges.visible = false;
+    for (const m of faces) m.visible = false;
+    renderer.shadowMap.needsUpdate = true;
     return;
   }
-  const v = clipInputs.map(el => Number(el.value) / 100);
-  // 同軸兩個界面不得交錯，留一點厚度才看得到東西
-  const span = (a, b, min, max) => {
-    let s0 = Math.min(a, b), s1 = Math.max(a, b);
-    if (s1 - s0 < 0.02) s1 = Math.min(s0 + 0.02, 1);
-    return [min + (max - min) * s0, min + (max - min) * s1];
-  };
-  const [x0, x1] = span(v[0], v[1], lo.x, hi.x);
-  const [y0, y1] = span(v[2], v[3], lo.y, hi.y);
-  const [z0, z1] = span(v[4], v[5], lo.z, hi.z);
-  clipPlanes[0].constant = -x0; clipPlanes[1].constant = x1;
-  clipPlanes[2].constant = -y0; clipPlanes[3].constant = y1;
-  clipPlanes[4].constant = -z0; clipPlanes[5].constant = z1;
-  if (boxHelper) {
-    boxHelper.box.set(new THREE.Vector3(x0, y0, z0), new THREE.Vector3(x1, y1, z1));
-    boxHelper.visible = true;
+  const b = clipBounds();
+  for (let a = 0; a < 3; a++) {
+    clipPlanes[a * 2].constant = -b[a][0];
+    clipPlanes[a * 2 + 1].constant = b[a][1];
   }
+  updateBoxVisual(b);
+  boxEdges.visible = true;
+  for (const m of faces) m.visible = true;
   renderer.shadowMap.needsUpdate = true;
 }
-
-for (const el of clipInputs) el.addEventListener('input', applyClip);
 
 boxBtn.addEventListener('click', () => {
   clipOn = !clipOn;
@@ -353,9 +401,94 @@ boxBtn.addEventListener('click', () => {
 });
 
 document.getElementById('clipReset').addEventListener('click', () => {
-  clipInputs.forEach((el, i) => { el.value = i % 2 ? 100 : 0; });
+  clipFrac = [0, 1, 0, 1, 0, 1];
   applyClip();
 });
+
+// 直接拖曳剖面框的面
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let dragging = null;
+let hovered = null;
+
+function toNdc(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  return ndc;
+}
+
+function pickFace(e) {
+  ray.setFromCamera(toNdc(e), camera);
+  const hit = ray.intersectObjects(faces, false)[0];
+  return hit || null;
+}
+
+function setHover(m) {
+  if (hovered === m) return;
+  if (hovered) hovered.material.opacity = 0;
+  hovered = m;
+  if (hovered) hovered.material.opacity = 0.18;
+  renderer.domElement.style.cursor = m ? 'move' : '';
+}
+
+renderer.domElement.addEventListener('pointerdown', e => {
+  if (!clipOn) return;
+  const hit = pickFace(e);
+  if (!hit) return;
+  const axis = hit.object.userData.axis;
+  const isHi = hit.object.userData.hi;
+  // 沿該軸拖曳：以一個含該軸且盡量正對相機的平面投影游標位置
+  const axisVec = new THREE.Vector3();
+  axisVec.setComponent(axis, 1);
+  const camDir = new THREE.Vector3();
+  camera.getWorldDirection(camDir);
+  const n = new THREE.Vector3().crossVectors(
+    axisVec, new THREE.Vector3().crossVectors(camDir, axisVec)).normalize();
+  if (!isFinite(n.x) || n.lengthSq() < 1e-6) return;
+  dragging = {
+    axis: axis,
+    hi: isHi,
+    plane: new THREE.Plane().setFromNormalAndCoplanarPoint(n, hit.point),
+    grabOffset: hit.point.getComponent(axis) - clipBounds()[axis][isHi ? 1 : 0],
+  };
+  controls.enabled = false;
+  renderer.domElement.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+
+renderer.domElement.addEventListener('pointermove', e => {
+  if (!clipOn) return;
+  if (!dragging) {
+    const hit = pickFace(e);
+    setHover(hit ? hit.object : null);
+    return;
+  }
+  ray.setFromCamera(toNdc(e), camera);
+  const pt = new THREE.Vector3();
+  if (!ray.ray.intersectPlane(dragging.plane, pt)) return;
+  const k = AXES[dragging.axis];
+  const lo = modelBox.min[k], hi = modelBox.max[k];
+  const span = hi - lo;
+  if (span <= 0) return;
+  let f = (pt.getComponent(dragging.axis) - dragging.grabOffset - lo) / span;
+  f = Math.max(0, Math.min(1, f));
+  const i = dragging.axis * 2 + (dragging.hi ? 1 : 0);
+  const other = clipFrac[dragging.axis * 2 + (dragging.hi ? 0 : 1)];
+  // 不讓兩面穿過彼此
+  f = dragging.hi ? Math.max(f, other + 0.02) : Math.min(f, other - 0.02);
+  clipFrac[i] = Math.max(0, Math.min(1, f));
+  applyClip();
+});
+
+function endDrag(e) {
+  if (!dragging) return;
+  dragging = null;
+  controls.enabled = true;
+  try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (err) { /* 已釋放 */ }
+}
+renderer.domElement.addEventListener('pointerup', endDrag);
+renderer.domElement.addEventListener('pointercancel', endDrag);
+renderer.domElement.addEventListener('pointerleave', () => { if (!dragging) setHover(null); });
 
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
@@ -515,12 +648,7 @@ function load(tag) {
     controls.maxDistance = radius * 12;
 
     modelBox = fullBox.clone();
-    if (!boxHelper) {
-      boxHelper = new THREE.Box3Helper(modelBox.clone(), 0x444444);
-      boxHelper.material.depthTest = false;
-      scene.add(boxHelper);
-    }
-    clipInputs.forEach((el, i) => { el.value = i % 2 ? 100 : 0; });
+    clipFrac = [0, 1, 0, 1, 0, 1];
     applyClip();
 
     buildLayers(current);
