@@ -70,10 +70,17 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .gal figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
 .gal figcaption b{font-weight:500;color:var(--ink)}
 
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;align-items:start}
+.pair figure{margin:0;border:1px solid var(--line)}
+.pair img{display:block;width:100%;height:auto;background:var(--panel2)}
+.pair figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
+.pair figcaption b{font-weight:500;color:var(--ink)}
+
 @media (max-width:640px){
   main{padding:20px 14px 52px}
   h1{font-size:19px}
   .gal{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .pair{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -216,6 +223,11 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
     <td class="wrap">補齊缺漏構件，補設落地柱、邊梁及屋面承梁；合併重複元件，外觀維持不變。</td></tr>
 </tbody>
 </table>
+</div>
+
+<div class="pair">
+  <figure><img loading="lazy" src="images/method_markup.webp" alt="模型截圖上以紅筆圈註六處待修正位置並編號，右側列出對應之六條文字說明" style="width:100%;height:auto"><figcaption><b>本案模型修正指示</b>　截圖標註與對應文字</figcaption></figure>
+  <figure><img loading="lazy" src="images/method_office.webp" alt="事務所專案頻道之訊息畫面，附以藍筆標註之樓梯剖面圖、立面圖及現場照片" style="width:100%;height:auto"><figcaption><b>既有案件圖說指示</b>　新北市立圖書館第二總館</figcaption></figure>
 </div>
 
 <h2>來源</h2>
