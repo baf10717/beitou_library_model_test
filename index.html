@@ -66,21 +66,22 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
 .gal figure{margin:0;border:1px solid var(--line)}
-.gal img{display:block;width:100%;height:auto;background:var(--panel2)}
+.gal img{display:block;width:100%;height:auto;background:var(--panel2);cursor:zoom-in}
 .gal figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
 .gal figcaption b{font-weight:500;color:var(--ink)}
 
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;align-items:start}
-.pair figure{margin:0;border:1px solid var(--line)}
-.pair img{display:block;width:100%;height:auto;background:var(--panel2)}
-.pair figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
-.pair figcaption b{font-weight:500;color:var(--ink)}
+.lb{position:fixed;inset:0;z-index:50;background:rgba(24,24,24,.9);padding:20px;overflow:auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.lb[hidden]{display:none!important}
+.lb img{max-width:96vw;max-height:86vh;cursor:zoom-in;background:var(--panel2)}
+.lb.zoom img{max-width:none;max-height:none;cursor:zoom-out}
+.lb figcaption{color:#efefef;font-size:13px;text-align:center}
+.lb .tip{color:#9a9a9a;font-size:12px}
 
 @media (max-width:640px){
   main{padding:20px 14px 52px}
   h1{font-size:19px}
   .gal{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
-  .pair{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -225,13 +226,19 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </table>
 </div>
 
-<div class="pair">
+<div class="gal">
   <figure><img loading="lazy" src="images/method_markup.webp" alt="模型截圖上以紅筆圈註六處待修正位置並編號，右側列出對應之六條文字說明" style="width:100%;height:auto"><figcaption><b>本案模型修正指示</b>　截圖標註與對應文字</figcaption></figure>
   <figure><img loading="lazy" src="images/method_office.webp" alt="事務所專案頻道之訊息畫面，附以藍筆標註之樓梯剖面圖、立面圖及現場照片" style="width:100%;height:auto"><figcaption><b>既有案件圖說指示</b>　新北市立圖書館第二總館</figcaption></figure>
 </div>
 
 <h2>來源</h2>
 <p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。</p>
+
+<div class="lb" id="lb" hidden>
+  <img id="lbImg" alt="">
+  <figcaption id="lbCap"></figcaption>
+  <div class="tip">點圖片放大至原尺寸，點四周或按 Esc 關閉</div>
+</div>
 
 </main>
 
@@ -534,6 +541,31 @@ for (const btn of document.querySelectorAll('[data-ver]')) {
     load(btn.dataset.ver);
   });
 }
+// 點圖片放大檢視；再點圖片切換為原尺寸，點四周或 Esc 關閉
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbCap = document.getElementById('lbCap');
+
+function closeLb() { lb.hidden = true; lb.classList.remove('zoom'); lbImg.removeAttribute('src'); }
+
+document.addEventListener('click', e => {
+  if (!lb.hidden) {
+    if (e.target === lbImg) lb.classList.toggle('zoom');
+    else closeLb();
+    return;
+  }
+  const img = e.target.closest('.gal img');
+  if (!img) return;
+  lbImg.src = img.currentSrc || img.src;
+  lbImg.alt = img.alt;
+  const cap = img.closest('figure') && img.closest('figure').querySelector('figcaption');
+  lbCap.textContent = cap ? cap.textContent : '';
+  lb.classList.remove('zoom');
+  lb.hidden = false;
+});
+
+addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+
 for (const btn of document.querySelectorAll('[data-view]')) {
   btn.addEventListener('click', () => setView(btn.dataset.view));
 }
