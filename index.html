@@ -110,7 +110,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉、縮放檢視。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果。選擇東西南北時會自動關閉鄰棟與植栽，避免遮擋。開啟「剖面框」後，直接拖曳框的任一面即可切割模型。</p>
+<p class="hint">右鍵環繞、中鍵轉頭、滾輪或左鍵拖曳縮放；左鍵點一下可將該處設為環繞中心。開啟「剖面框」後，左鍵改為拖曳框的任一面切割模型。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果，選擇東西南北時會自動關閉鄰棟與植栽以免遮擋。</p>
 
 <h2>競圖提案階段之應用</h2>
 <div class="tw">
@@ -275,6 +275,12 @@ const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 4000);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
+// 左鍵縮放、右鍵環繞；中鍵的轉頭與剖面框的拖曳另行處理
+controls.mouseButtons = {
+  LEFT: THREE.MOUSE.DOLLY,
+  MIDDLE: null,
+  RIGHT: THREE.MOUSE.ROTATE,
+};
 
 const draco = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/gltf/');
@@ -399,11 +405,18 @@ clipResetBtn.addEventListener('click', () => {
   applyClip();
 });
 
-// 直接拖曳剖面框的面
+// 滑鼠操作：
+//   左鍵  開啟剖面框時拖曳框面切割，未開啟時縮放；點一下則以該處為環繞中心
+//   右鍵  環繞
+//   中鍵  轉頭，相機位置不動只改變視線方向
+// 事件掛在 stage 的捕獲階段，才能在 OrbitControls 之前攔下要自行處理的操作。
 const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
+const WORLD_UP = new THREE.Vector3(0, 1, 0);
 let dragging = null;
+let looking = null;
 let hovered = null;
+let pressAt = null;
 
 function toNdc(e) {
   const r = renderer.domElement.getBoundingClientRect();
@@ -413,8 +426,17 @@ function toNdc(e) {
 
 function pickFace(e) {
   ray.setFromCamera(toNdc(e), camera);
-  const hit = ray.intersectObjects(faces, false)[0];
-  return hit || null;
+  return ray.intersectObjects(faces, false)[0] || null;
+}
+
+function pickModel(e) {
+  if (!current) return null;
+  ray.setFromCamera(toNdc(e), camera);
+  const hits = ray.intersectObject(current, true);
+  for (const h of hits) {
+    if (!faces.includes(h.object) && h.object.visible) return h;
+  }
+  return null;
 }
 
 function setHover(m) {
@@ -422,13 +444,10 @@ function setHover(m) {
   if (hovered) hovered.material.opacity = 0;
   hovered = m;
   if (hovered) hovered.material.opacity = 0.18;
-  renderer.domElement.style.cursor = m ? 'move' : '';
+  stage.style.cursor = m ? 'move' : '';
 }
 
-renderer.domElement.addEventListener('pointerdown', e => {
-  if (!clipOn) return;
-  const hit = pickFace(e);
-  if (!hit) return;
+function startFaceDrag(e, hit) {
   const axis = hit.object.userData.axis;
   const isHi = hit.object.userData.hi;
   // 沿該軸拖曳：以一個含該軸且盡量正對相機的平面投影游標位置
@@ -438,51 +457,108 @@ renderer.domElement.addEventListener('pointerdown', e => {
   camera.getWorldDirection(camDir);
   const n = new THREE.Vector3().crossVectors(
     axisVec, new THREE.Vector3().crossVectors(camDir, axisVec)).normalize();
-  if (!isFinite(n.x) || n.lengthSq() < 1e-6) return;
+  if (!isFinite(n.x) || n.lengthSq() < 1e-6) return false;
   dragging = {
     axis: axis,
     hi: isHi,
     plane: new THREE.Plane().setFromNormalAndCoplanarPoint(n, hit.point),
     grabOffset: hit.point.getComponent(axis) - clipBounds()[axis][isHi ? 1 : 0],
   };
-  controls.enabled = false;
-  renderer.domElement.setPointerCapture(e.pointerId);
-  e.preventDefault();
-});
+  return true;
+}
 
-renderer.domElement.addEventListener('pointermove', e => {
-  if (!clipOn) return;
-  if (!dragging) {
-    const hit = pickFace(e);
-    setHover(hit ? hit.object : null);
+stage.addEventListener('pointerdown', e => {
+  pressAt = { x: e.clientX, y: e.clientY, button: e.button };
+  if (e.button === 1) {                       // 中鍵轉頭
+    looking = { x: e.clientX, y: e.clientY };
+    try { stage.setPointerCapture(e.pointerId); } catch (err) { /* 無此指標 */ }
+    stage.style.cursor = 'grabbing';
+    e.preventDefault();
+    e.stopPropagation();
     return;
   }
-  ray.setFromCamera(toNdc(e), camera);
-  const pt = new THREE.Vector3();
-  if (!ray.ray.intersectPlane(dragging.plane, pt)) return;
-  const k = AXES[dragging.axis];
-  const lo = modelBox.min[k], hi = modelBox.max[k];
-  const span = hi - lo;
-  if (span <= 0) return;
-  let f = (pt.getComponent(dragging.axis) - dragging.grabOffset - lo) / span;
-  f = Math.max(0, Math.min(1, f));
-  const i = dragging.axis * 2 + (dragging.hi ? 1 : 0);
-  const other = clipFrac[dragging.axis * 2 + (dragging.hi ? 0 : 1)];
-  // 不讓兩面穿過彼此
-  f = dragging.hi ? Math.max(f, other + 0.02) : Math.min(f, other - 0.02);
-  clipFrac[i] = Math.max(0, Math.min(1, f));
-  applyClip();
-});
+  if (e.button === 0 && clipOn) {             // 左鍵在剖面框上拖曳框面
+    const hit = pickFace(e);
+    if (hit && startFaceDrag(e, hit)) {
+      try { stage.setPointerCapture(e.pointerId); } catch (err) { /* 無此指標 */ }
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+}, true);
 
-function endDrag(e) {
-  if (!dragging) return;
-  dragging = null;
-  controls.enabled = true;
-  try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (err) { /* 已釋放 */ }
+stage.addEventListener('pointermove', e => {
+  if (looking) {                              // 相機不動，只轉視線
+    const dx = e.clientX - looking.x, dy = e.clientY - looking.y;
+    looking.x = e.clientX; looking.y = e.clientY;
+    const dir = controls.target.clone().sub(camera.position);
+    const len = dir.length();
+    dir.applyAxisAngle(WORLD_UP, -dx * 0.004);
+    const right = new THREE.Vector3().crossVectors(dir, WORLD_UP).normalize();
+    if (right.lengthSq() > 1e-8) {
+      const next = dir.clone().applyAxisAngle(right, -dy * 0.004);
+      // 避免視線翻過天頂
+      if (Math.abs(next.clone().normalize().dot(WORLD_UP)) < 0.985) dir.copy(next);
+    }
+    controls.target.copy(camera.position).add(dir.setLength(len));
+    controls.update();
+    e.stopPropagation();
+    return;
+  }
+  if (dragging) {
+    ray.setFromCamera(toNdc(e), camera);
+    const pt = new THREE.Vector3();
+    if (!ray.ray.intersectPlane(dragging.plane, pt)) return;
+    const k = AXES[dragging.axis];
+    const lo = modelBox.min[k], hi = modelBox.max[k];
+    const span = hi - lo;
+    if (span <= 0) return;
+    let f = (pt.getComponent(dragging.axis) - dragging.grabOffset - lo) / span;
+    f = Math.max(0, Math.min(1, f));
+    const i = dragging.axis * 2 + (dragging.hi ? 1 : 0);
+    const other = clipFrac[dragging.axis * 2 + (dragging.hi ? 0 : 1)];
+    // 不讓兩面穿過彼此
+    f = dragging.hi ? Math.max(f, other + 0.02) : Math.min(f, other - 0.02);
+    clipFrac[i] = Math.max(0, Math.min(1, f));
+    applyClip();
+    e.stopPropagation();
+    return;
+  }
+  if (clipOn) {
+    const hit = pickFace(e);
+    setHover(hit ? hit.object : null);
+  } else if (hovered) {
+    setHover(null);
+  }
+}, true);
+
+function endPointer(e) {
+  const wasDrag = dragging || looking;
+  if (dragging) dragging = null;
+  if (looking) { looking = null; stage.style.cursor = ''; }
+  if (wasDrag) {
+    try { stage.releasePointerCapture(e.pointerId); } catch (err) { /* 已釋放 */ }
+  }
+  // 左鍵點一下（未拖動）：以點到的位置作為環繞中心
+  if (pressAt && pressAt.button === 0 && e.button === 0 && !wasDrag) {
+    const moved = Math.hypot(e.clientX - pressAt.x, e.clientY - pressAt.y);
+    if (moved < 4) {
+      const hit = pickModel(e);
+      if (hit) {
+        controls.target.copy(hit.point);
+        controls.update();
+      }
+    }
+  }
+  pressAt = null;
 }
-renderer.domElement.addEventListener('pointerup', endDrag);
-renderer.domElement.addEventListener('pointercancel', endDrag);
-renderer.domElement.addEventListener('pointerleave', () => { if (!dragging) setHover(null); });
+
+stage.addEventListener('pointerup', endPointer, true);
+stage.addEventListener('pointercancel', endPointer, true);
+stage.addEventListener('pointerleave', () => { if (!dragging && !looking) setHover(null); });
+stage.addEventListener('contextmenu', e => e.preventDefault());
+// 中鍵在部分瀏覽器會觸發自動捲動
+stage.addEventListener('auxclick', e => { if (e.button === 1) e.preventDefault(); });
 
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
