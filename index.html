@@ -74,7 +74,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
 .lb[hidden]{display:none!important}
 .lb img{max-width:96vw;max-height:86vh;cursor:zoom-in;background:var(--panel2)}
-.lb.zoom img{max-width:none;max-height:none;cursor:zoom-out}
+.lb.zoom img{max-width:none;max-height:none}
 .lb figcaption{color:#efefef;font-size:13px;text-align:center}
 .lb .tip{color:#9a9a9a;font-size:12px}
 
@@ -545,13 +545,44 @@ for (const btn of document.querySelectorAll('[data-ver]')) {
 const lb = document.getElementById('lb');
 const lbImg = document.getElementById('lbImg');
 const lbCap = document.getElementById('lbCap');
+const lbTip = document.querySelector('.lb .tip');
 
-function closeLb() { lb.hidden = true; lb.classList.remove('zoom'); lbImg.removeAttribute('src'); }
+// 放大倍率相對於「符合視窗」時的寬度，來源解析度較低時仍會實際放大
+const ZOOM = [1, 2, 4];
+let zoomStep = 0;
+let fitWidth = 0;
+
+function applyZoom() {
+  if (zoomStep === 0) {
+    lb.classList.remove('zoom');
+    lbImg.style.width = '';
+    lbImg.style.cursor = 'zoom-in';
+  } else {
+    lb.classList.add('zoom');
+    lbImg.style.width = Math.round(fitWidth * ZOOM[zoomStep]) + 'px';
+    lbImg.style.cursor = zoomStep === ZOOM.length - 1 ? 'zoom-out' : 'zoom-in';
+  }
+  lbTip.textContent = zoomStep === 0
+    ? '點圖片放大，點四周或按 Esc 關閉'
+    : '目前 ' + ZOOM[zoomStep] + ' 倍，再點放大，最大後回到原狀';
+}
+
+function closeLb() {
+  lb.hidden = true;
+  zoomStep = 0;
+  lb.classList.remove('zoom');
+  lbImg.style.width = '';
+  lbImg.removeAttribute('src');
+}
 
 document.addEventListener('click', e => {
   if (!lb.hidden) {
-    if (e.target === lbImg) lb.classList.toggle('zoom');
-    else closeLb();
+    if (e.target === lbImg) {
+      zoomStep = (zoomStep + 1) % ZOOM.length;
+      applyZoom();
+    } else {
+      closeLb();
+    }
     return;
   }
   const img = e.target.closest('.gal img');
@@ -560,8 +591,15 @@ document.addEventListener('click', e => {
   lbImg.alt = img.alt;
   const cap = img.closest('figure') && img.closest('figure').querySelector('figcaption');
   lbCap.textContent = cap ? cap.textContent : '';
+  zoomStep = 0;
   lb.classList.remove('zoom');
+  lbImg.style.width = '';
   lb.hidden = false;
+  // 疊層顯示後才量得到符合視窗時的實際寬度
+  requestAnimationFrame(() => {
+    fitWidth = lbImg.getBoundingClientRect().width;
+    applyZoom();
+  });
 });
 
 addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
