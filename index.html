@@ -547,10 +547,16 @@ const lbImg = document.getElementById('lbImg');
 const lbCap = document.getElementById('lbCap');
 const lbTip = document.querySelector('.lb .tip');
 
-// 放大倍率相對於「符合視窗」時的寬度，來源解析度較低時仍會實際放大
+// 放大倍率相對於「符合視窗」時的寬度，來源解析度較低時仍會實際放大。
+// 該寬度由原始尺寸與視窗換算，不取當下渲染值，否則圖片尚未載完會量到 0。
 const ZOOM = [1, 2, 4];
 let zoomStep = 0;
-let fitWidth = 0;
+
+function fitWidth() {
+  const nw = lbImg.naturalWidth, nh = lbImg.naturalHeight;
+  if (!nw || !nh) return 0;
+  return Math.min(nw, innerWidth * 0.96, innerHeight * 0.86 * nw / nh);
+}
 
 function applyZoom() {
   if (zoomStep === 0) {
@@ -558,8 +564,10 @@ function applyZoom() {
     lbImg.style.width = '';
     lbImg.style.cursor = 'zoom-in';
   } else {
+    const w = fitWidth();
+    if (!w) { zoomStep = 0; lb.classList.remove('zoom'); lbImg.style.width = ''; return; }
     lb.classList.add('zoom');
-    lbImg.style.width = Math.round(fitWidth * ZOOM[zoomStep]) + 'px';
+    lbImg.style.width = Math.round(w * ZOOM[zoomStep]) + 'px';
     lbImg.style.cursor = zoomStep === ZOOM.length - 1 ? 'zoom-out' : 'zoom-in';
   }
   lbTip.textContent = zoomStep === 0
@@ -595,12 +603,11 @@ document.addEventListener('click', e => {
   lb.classList.remove('zoom');
   lbImg.style.width = '';
   lb.hidden = false;
-  // 疊層顯示後才量得到符合視窗時的實際寬度
-  requestAnimationFrame(() => {
-    fitWidth = lbImg.getBoundingClientRect().width;
-    applyZoom();
-  });
+  applyZoom();
 });
+
+// 視窗改變大小時，放大後的寬度要跟著重算
+addEventListener('resize', () => { if (!lb.hidden && zoomStep) applyZoom(); });
 
 addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
 
