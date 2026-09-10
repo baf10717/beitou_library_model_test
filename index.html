@@ -590,7 +590,7 @@ const LAYER_ALIAS = {
 };
 
 function tidyName(raw) {
-  const n = raw.replace(/^V\d+_/, '').replace(/^\d+_/, '');
+  const n = raw.replace(/^V\d+[A-Z]*_/, '').replace(/^\d+_/, '');
   return LAYER_ALIAS[n] || n;
 }
 
