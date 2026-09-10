@@ -27,7 +27,7 @@ h2{font-size:16px;font-weight:700;margin:40px 0 10px}
 h3{font-size:13px;font-weight:500;margin:20px 0 8px;color:var(--ink2)}
 p{margin:0 0 10px}
 a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
-.lead{font-size:15px;line-height:1.7;max-width:80ch;margin:0 0 16px}
+.lead{font-size:15px;line-height:1.7;margin:0 0 16px}
 .tw{overflow-x:auto;border:1px solid var(--line);margin:0 0 12px}
 table{border-collapse:collapse;width:100%;background:var(--bg)}
 th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;white-space:nowrap}
@@ -36,7 +36,8 @@ tr:last-child td{border-bottom:none}
 td.wrap{white-space:normal;min-width:180px}
 td.say{white-space:normal;min-width:260px;max-width:460px;color:var(--ink)}
 td.say b{font-weight:500}
-.note{font-size:13px;color:var(--ink2);max-width:80ch}
+.note{font-size:13px;color:var(--ink2)}
+.sub{color:var(--ink3);font-size:12px}
 
 
 .viewer{border:1px solid var(--line2);background:var(--panel);margin:0 0 10px}
@@ -58,7 +59,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
 
-.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin:0 0 12px;align-items:start}
+.gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
+  grid-template-columns:repeat(auto-fill,minmax(max(200px,calc((100% - 72px)/7)),1fr))}
 .gal figure{margin:0;border:1px solid var(--line)}
 .gal img{display:block;width:100%;height:auto;background:var(--panel2)}
 .gal figcaption{padding:5px 9px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);background:var(--panel)}
@@ -67,7 +69,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 @media (max-width:640px){
   main{padding:20px 14px 52px}
   h1{font-size:19px}
-  .gal{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .gal{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 }
 </style>
 </head>
@@ -90,7 +92,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
       <button type="button" data-view="north">北</button>
       <button type="button" data-view="south">南</button>
       <button type="button" data-view="east">東</button>
-      <button type="button" data-view="top">俯視</button>
+      <button type="button" data-view="west">西</button>
       <button type="button" data-view="iso">斜視</button>
     </div>
   </div>
@@ -99,7 +101,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">拖曳旋轉、縮放檢視。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果。</p>
+<p class="hint">拖曳旋轉、縮放檢視。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果。選擇東西南北時會自動關閉鄰棟與植栽，避免遮擋。</p>
 
 <h2>競圖提案階段之應用</h2>
 <div class="tw">
@@ -115,67 +117,89 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <p class="note">適用範圍不含測繪、結構與法規檢核及施工圖說。</p>
 
 <h2>成果圖</h2>
+<p class="lead">五個版本以相同視點輸出，可逐項比對同一位置在各階段的差異。外觀為接近地面的視點，室內、剖面與平面取自模型本身，未經修圖。</p>
 
-<h3>第一版（第一日，僅提供照片）</h3>
+<h3>第一版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v1_northeast.webp" alt="第一版東北向"><figcaption><b>東北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_north_elevation.webp" alt="第一版北立面"><figcaption><b>北立面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_north.webp" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_east.webp" alt="第一版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_west.webp" alt="第一版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_first.webp" alt="第一版一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_landing.webp" alt="第一版主梯與挑空"><figcaption><b>主梯與挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_second.webp" alt="第一版二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_section.webp" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_plan.webp" alt="第一版平面"><figcaption><b>平面</b></figcaption></figure>
 </div>
 
 <h3>第二版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v2_northeast.webp" alt="第二版東北向"><figcaption><b>東北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_roof.webp" alt="第二版屋頂俯視"><figcaption><b>屋頂俯視</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_east.webp" alt="第二版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_west.webp" alt="第二版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_first.webp" alt="第二版一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_landing.webp" alt="第二版主梯與挑空"><figcaption><b>主梯與挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_second.webp" alt="第二版二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_section.webp" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_plan.webp" alt="第二版平面"><figcaption><b>平面</b></figcaption></figure>
 </div>
 
 <h3>第三版（第一日）</h3>
 <div class="gal">
   <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_top.webp" alt="第三版屋頂"><figcaption><b>屋頂</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_east.webp" alt="第三版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_west.webp" alt="第三版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_first.webp" alt="第三版一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_landing.webp" alt="第三版主梯與挑空"><figcaption><b>主梯與挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_second.webp" alt="第三版二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_section.webp" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_plan.webp" alt="第三版平面"><figcaption><b>平面</b></figcaption></figure>
 </div>
 
 <h3>第四版（第二日）</h3>
 <div class="gal">
   <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_atrium.webp" alt="第四版挑空與主梯"><figcaption><b>挑空與主梯</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_reading.webp" alt="第四版二層閱覽區"><figcaption><b>二層閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_east.webp" alt="第四版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_west.webp" alt="第四版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_first.webp" alt="第四版一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_landing.webp" alt="第四版主梯與挑空"><figcaption><b>主梯與挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_second.webp" alt="第四版二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_section.webp" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_plan.webp" alt="第四版平面"><figcaption><b>平面</b></figcaption></figure>
 </div>
 
 <h3>第五版（第二日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v5_north.webp" alt="北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_east.webp" alt="東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_west.webp" alt="西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_first.webp" alt="一層室內"><figcaption><b>一層室內</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_landing.webp" alt="主梯"><figcaption><b>主梯</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_second.webp" alt="二層室內"><figcaption><b>二層室內</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_section.webp" alt="剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_plan.webp" alt="平面"><figcaption><b>平面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_east.webp" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_west.webp" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_first.webp" alt="第五版一層室內"><figcaption><b>一層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp" alt="第五版主梯與挑空"><figcaption><b>主梯與挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_second.webp" alt="第五版二層室內"><figcaption><b>二層室內</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_section.webp" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_plan.webp" alt="第五版平面"><figcaption><b>平面</b></figcaption></figure>
 </div>
 
-<h2>指示方式與執行結果</h2>
+<h2>修正過程</h2>
+<p class="lead">五個版本都是同一種做法：看目前的成果，指出哪裡不對，說明下一步要做到什麼程度。沒有提供尺寸標註，也沒有交付構件清單。</p>
 <div class="tw">
 <table>
-<thead><tr><th class="say">指示內容</th><th class="wrap">執行結果</th></tr></thead>
+<thead><tr><th>版本</th><th class="say">我說的</th><th class="wrap">模型做的</th></tr></thead>
 <tbody>
-<tr><td class="say">建立建築物本身的模型(主要) 及周邊環境(次要)</td>
-    <td class="wrap">自公司作品資料庫檢索出 92 張照片，並查得基地位置與座標，完成第一版。指示未含尺寸及構件清單。</td></tr>
-<tr><td class="say">差太多了 網路上可以找到北投圖書館平面圖、剖面圖 google map 也看得到</td>
-    <td class="wrap">退回重做，並自行檢索所需平面、剖面圖說及航照。</td></tr>
-<tr><td class="say">相對關係 你應該可以看得到 比例不要失真即可</td>
-    <td class="wrap">確立本階段之容許誤差範圍。</td></tr>
-<tr><td class="say">你要先確定 整個量體 比例是正確的 再來刻這些細節</td>
-    <td class="wrap">先以航照校正整體量體，再行細部。過程中自行發現並更正先前對地圖比例尺之誤判。</td></tr>
-<tr><td class="say">玻璃應該是透明的</td>
-    <td class="wrap">修正材質設定。</td></tr>
-<tr><td class="say">平面、剖面 應該已經足以讓你建立相對正確的內部空間<br>（附一層平面與剖面圖，未標註尺寸）</td>
-    <td class="wrap">判讀樓層標高，建置挑空、樓梯、隔間及家具。</td></tr>
-<tr><td class="say">有些地方還有破面、或欄杆等明顯有缺<br>你必須用剖面檢視 或進去裡面漫遊檢視 將其修正至合理化</td>
-    <td class="wrap">自行以剖面及室內視點逐項檢視，補齊缺漏構件。</td></tr>
-<tr><td class="say">結構 例如梁柱沒有銜接到 之類的問題 你要也合理化</td>
-    <td class="wrap">補設落地柱、邊梁及屋面承梁。</td></tr>
-<tr><td class="say">每一本書 建立了一個物件 造成現在模型過大 可以適當簡化</td>
-    <td class="wrap">合併重複構件，元件數量降至十分之一，外觀維持不變。</td></tr>
+<tr><td>第一版<br><span class="sub">第一日</span></td>
+    <td class="say">只說要建這棟建築，本體為主、周邊次要。沒有給圖，也沒有給尺寸。</td>
+    <td class="wrap">自行找出公司作品庫的 92 張照片與基地座標，做出第一個量體。</td></tr>
+<tr><td>第二版<br><span class="sub">第一日</span></td>
+    <td class="say">說差太多，提醒網路上查得到平面圖與剖面圖、Google 地圖也看得到，比例不要失真就好。</td>
+    <td class="wrap">退回重做，自行檢索圖說與航照，重新校正整體量體。</td></tr>
+<tr><td>第三版<br><span class="sub">第一日</span></td>
+    <td class="say">要求先把整體量體的比例確定下來再刻細節，另外指出玻璃應該是透明的。</td>
+    <td class="wrap">以航照校正量體，過程中自行發現先前判讀地圖比例尺有誤並更正，並修正材質。</td></tr>
+<tr><td>第四版<br><span class="sub">第二日</span></td>
+    <td class="say">給一層平面與一張剖面圖，圖上沒有標尺寸，要他據此建立室內空間。</td>
+    <td class="wrap">判讀樓層標高，建置挑空、樓梯、隔間與家具。</td></tr>
+<tr><td>第五版<br><span class="sub">第二日</span></td>
+    <td class="say">指出有破面、欄杆缺漏、梁柱沒有銜接，要他自己用剖面和室內漫遊逐一檢視修正；另外說模型太大要簡化。</td>
+    <td class="wrap">補齊缺漏構件，補設落地柱、邊梁與屋面承梁；合併重複元件，數量降至十分之一，外觀不變。</td></tr>
 </tbody>
 </table>
 </div>
@@ -240,6 +264,8 @@ let current = null;
 let center = new THREE.Vector3();
 let radius = 30;
 let focusB = null;
+let siteTop = 0;
+let blockers = null;   // 鄰棟與植栽，方位視角時自動關閉
 
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
@@ -277,6 +303,7 @@ function tidyName(raw) {
 
 function buildLayers(root) {
   layersEl.textContent = '';
+  blockers = null;
   const parts = root.children.filter(o => o.type !== 'Object3D' || o.children.length || o.isMesh);
   const single = parts.length === 1;
   // 不同版本沿用的集合可能整理成同一個名稱，合併為一個開關
@@ -297,6 +324,7 @@ function buildLayers(root) {
     });
     label.append(cb, document.createTextNode(name));
     layersEl.appendChild(label);
+    if (name === '鄰棟與植栽') blockers = { cb, objs };
   }
 }
 
@@ -315,11 +343,8 @@ function focusBox(root) {
 }
 
 // glTF 以 Y 為上，Blender 的 +Y（北）在匯出時轉為 -Z，方位依此換算
-const VIEW_DIR = {
-  north: [0, 0.34, -1], south: [0, 0.34, 1], east: [1, 0.34, 0],
-  // 俯視略向南偏，避免相機朝上向量退化，同時讓北方朝上
-  top: [0, 1, 0.006], iso: [0.85, 0.62, -1],
-};
+const VIEW_H = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] };
+const ISO_DIR = [0.85, 0.62, -1];
 
 // 把包圍盒八個角點投影到該視角的相機平面，取剛好容納全部角點的距離
 function fitForDir(box, dir) {
@@ -344,9 +369,21 @@ function fitForDir(box, dir) {
   return Math.max(need, 1) * 1.06;
 }
 
+// 方位視角採接近地面的低視點，並關閉鄰棟與植栽，否則低視點必被遮擋。
+// 斜視恢復顯示，勾選框同步更新，使用者仍可自行開關。
 function setView(name) {
   if (!focusB) return;
-  const dir = new THREE.Vector3(...(VIEW_DIR[name] || VIEW_DIR.iso)).normalize();
+  const h = VIEW_H[name];
+  if (blockers) {
+    const show = !h;
+    if (blockers.cb.checked !== show) {
+      blockers.cb.checked = show;
+      for (const o of blockers.objs) o.visible = show;
+      renderer.shadowMap.needsUpdate = true;
+    }
+  }
+  const dir = h ? new THREE.Vector3(h[0], 0.10, h[1]).normalize()
+                : new THREE.Vector3(...ISO_DIR).normalize();
   camera.position.copy(center).addScaledVector(dir, fitForDir(focusB, dir));
   controls.target.copy(center);
   controls.update();
@@ -373,7 +410,9 @@ function load(tag) {
     });
     scene.add(current);
 
-    setupSun(new THREE.Box3().setFromObject(current));
+    const fullBox = new THREE.Box3().setFromObject(current);
+    setupSun(fullBox);
+    siteTop = fullBox.max.y;
 
     const box = focusBox(current);
     focusB = box;
