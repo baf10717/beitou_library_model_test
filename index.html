@@ -58,8 +58,9 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
-.hero{background:#fff;margin:0 0 40px}
-.hero video{display:block;width:100%;height:100%;object-fit:contain;outline:none}
+.hero{display:flex;align-items:center;justify-content:center;background:#fff;margin:0 0 40px}
+/* 影片元素尺寸由腳本設成剛好等於畫面；裁掉最外 2px，避免 Windows Chrome 以硬體覆疊層縮放影片時畫面邊緣出現暗線 */
+.hero video{display:block;outline:none;clip-path:inset(2px)}
 
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
@@ -250,6 +251,7 @@ const statusEl = document.getElementById('status');
 const layersEl = document.getElementById('layers');
 const hintEl = document.querySelector('.hint');
 const heroEl = document.querySelector('.hero');
+const videoEl = heroEl.querySelector('video');
 const introEl = document.getElementById('intro');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -570,6 +572,10 @@ function resize() {
   // 第一屏：標題下方的影片區填到視窗底部；往下捲一屏：說明、檢視器與操作提示填滿視窗。底部留白與兩側內距相同
   const hero = heroEl.getBoundingClientRect();
   heroEl.style.height = Math.max(240, innerHeight - 32 - (hero.top + scrollY)) + 'px';
+  // 影片為 16:9，在影片區內等比置中，元素框剛好等於畫面
+  const vw = Math.min(heroEl.clientWidth, Math.floor(heroEl.clientHeight * 16 / 9));
+  videoEl.style.width = vw + 'px';
+  videoEl.style.height = Math.round(vw * 9 / 16) + 'px';
   const st = stage.getBoundingClientRect(), hint = hintEl.getBoundingClientRect(), intro = introEl.getBoundingClientRect();
   stage.style.height = Math.max(340, innerHeight - 32 - 26 - (st.top - intro.top) - (hint.bottom - st.bottom)) + 'px';
   const w = stage.clientWidth, h = stage.clientHeight;
