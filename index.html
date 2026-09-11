@@ -59,8 +59,9 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
 .hero{display:flex;align-items:center;justify-content:center;background:#fff;margin:0 0 40px}
-/* 影片元素尺寸由腳本設成剛好等於畫面；裁掉最外 2px，避免 Windows Chrome 以硬體覆疊層縮放影片時畫面邊緣出現暗線 */
-.hero video{display:block;outline:none;clip-path:inset(2px)}
+/* 影片元素尺寸由腳本設成剛好等於畫面。Windows Chrome 以硬體覆疊層播放影片時，會連解碼貼圖的對齊補白一起顯示，
+   畫面右側外約 120px 處出現一條暗線且截圖抓不到；加上 filter 讓影片改走一般合成路徑，不使用覆疊層 */
+.hero video{display:block;outline:none;clip-path:inset(2px);filter:brightness(1.001)}
 
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
