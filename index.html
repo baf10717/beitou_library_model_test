@@ -8,6 +8,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+// 版本檢查：GitHub Pages 與瀏覽器會快取十分鐘。開頁時向來源確認最新版本，不同就改用新網址重新載入，
+// 所有本地資源網址也帶版本號，確保不會拿到舊檔。版本號由 scripts/deploy_site.py 蓋上。
+var BUILD='20260911115213';
+(function(){
+  var q = new URLSearchParams(location.search);
+  fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function(r){ return r.text(); }).then(function(v){
+    v = v.trim();
+    if (v && v !== BUILD && q.get('v') !== v) { q.set('v', v); location.replace(location.pathname + '?' + q.toString()); }
+  }).catch(function(){});
+})();
+</script>
 <style>
 :root{
   color-scheme: light;
@@ -94,7 +106,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <main>
 
 <h1>北投圖書館建模測試</h1>
-<div class="hero"><video src="video/astra_architecture_60s.mp4?v=63826fdb" autoplay muted loop playsinline controls></video></div>
+<div class="hero"><video src="video/astra_architecture_60s.mp4?v=20260911115213" autoplay muted loop playsinline controls></video></div>
 <p class="lead" id="intro">本案於兩日內，僅以口述指示完成臺北市立圖書館北投分館之三維模型建置。過程中未進行任何繪圖或程式撰寫；指示方式與交辦事務所同仁相同——提出需求、檢視成果、指出待修正處，共歷五個版本。</p>
 
 <div class="viewer">
@@ -138,62 +150,62 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 
 <h3>第一版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v1_east.webp" alt="第一版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_west.webp" alt="第一版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_south.webp" alt="第一版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_north.webp" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_first.webp" alt="第一版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_second.webp" alt="第一版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_section.webp" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_landing.webp?v=2" alt="第一版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_east.webp?v=20260911115213" alt="第一版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_west.webp?v=20260911115213" alt="第一版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_south.webp?v=20260911115213" alt="第一版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_north.webp?v=20260911115213" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_first.webp?v=20260911115213" alt="第一版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_second.webp?v=20260911115213" alt="第一版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_section.webp?v=20260911115213" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_landing.webp?v=20260911115213" alt="第一版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第二版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v2_east.webp" alt="第二版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_west.webp" alt="第二版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_south.webp" alt="第二版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_first.webp" alt="第二版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_second.webp" alt="第二版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_section.webp" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_landing.webp?v=2" alt="第二版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_east.webp?v=20260911115213" alt="第二版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_west.webp?v=20260911115213" alt="第二版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_south.webp?v=20260911115213" alt="第二版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_north.webp?v=20260911115213" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_first.webp?v=20260911115213" alt="第二版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_second.webp?v=20260911115213" alt="第二版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_section.webp?v=20260911115213" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_landing.webp?v=20260911115213" alt="第二版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第三版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v3_east.webp" alt="第三版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_west.webp" alt="第三版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_south.webp" alt="第三版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_first.webp" alt="第三版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_second.webp" alt="第三版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_section.webp" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_landing.webp?v=2" alt="第三版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_east.webp?v=20260911115213" alt="第三版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_west.webp?v=20260911115213" alt="第三版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_south.webp?v=20260911115213" alt="第三版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_north.webp?v=20260911115213" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_first.webp?v=20260911115213" alt="第三版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_second.webp?v=20260911115213" alt="第三版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_section.webp?v=20260911115213" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_landing.webp?v=20260911115213" alt="第三版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第四版（第二日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v4_east.webp" alt="第四版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_west.webp" alt="第四版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_south.webp" alt="第四版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_first.webp" alt="第四版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_second.webp" alt="第四版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_section.webp" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_landing.webp?v=2" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_east.webp?v=20260911115213" alt="第四版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_west.webp?v=20260911115213" alt="第四版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_south.webp?v=20260911115213" alt="第四版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_north.webp?v=20260911115213" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_first.webp?v=20260911115213" alt="第四版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_second.webp?v=20260911115213" alt="第四版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_section.webp?v=20260911115213" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_landing.webp?v=20260911115213" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第五版（第二日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v5_east.webp" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_west.webp" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_south.webp" alt="第五版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_first.webp" alt="第五版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_second.webp" alt="第五版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_section.webp" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_landing.webp?v=2" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_east.webp?v=20260911115213" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_west.webp?v=20260911115213" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_south.webp?v=20260911115213" alt="第五版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_north.webp?v=20260911115213" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_first.webp?v=20260911115213" alt="第五版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_second.webp?v=20260911115213" alt="第五版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_section.webp?v=20260911115213" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp?v=20260911115213" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h2>修正過程</h2>
@@ -760,7 +772,7 @@ function setView(name) {
 function load(tag) {
   statusEl.hidden = false;
   statusEl.textContent = '載入中';
-  loader.load('models/' + tag + '.glb', gltf => {
+  loader.load('models/' + tag + '.glb?v=' + BUILD, gltf => {
     if (current) {
       scene.remove(current);
       current.traverse(n => {
