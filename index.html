@@ -58,8 +58,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
-.hero{height:100vh;height:100svh;background:#000}
-.hero video{display:block;width:100%;height:100%;object-fit:cover}
+.hero{background:#f4f4f1;margin:0 0 40px}
+.hero video{display:block;width:100%;height:100%;object-fit:contain}
 
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
@@ -84,11 +84,11 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </style>
 </head>
 <body>
-<div class="hero"><video src="video/astra_architecture_60s.mp4" autoplay muted loop playsinline controls></video></div>
 <main>
 
 <h1>北投圖書館建模測試</h1>
-<p class="lead">本案於兩日內，僅以口述指示完成臺北市立圖書館北投分館之三維模型建置。過程中未進行任何繪圖或程式撰寫；指示方式與交辦事務所同仁相同——提出需求、檢視成果、指出待修正處，共歷五個版本。</p>
+<div class="hero"><video src="video/astra_architecture_60s.mp4" autoplay muted loop playsinline controls></video></div>
+<p class="lead" id="intro">本案於兩日內，僅以口述指示完成臺北市立圖書館北投分館之三維模型建置。過程中未進行任何繪圖或程式撰寫；指示方式與交辦事務所同仁相同——提出需求、檢視成果、指出待修正處，共歷五個版本。</p>
 
 <div class="viewer">
   <div class="bar">
@@ -244,7 +244,8 @@ const stage = document.getElementById('stage');
 const statusEl = document.getElementById('status');
 const layersEl = document.getElementById('layers');
 const hintEl = document.querySelector('.hint');
-const mainEl = document.querySelector('main');
+const heroEl = document.querySelector('.hero');
+const introEl = document.getElementById('intro');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -561,10 +562,11 @@ stage.addEventListener('contextmenu', e => e.preventDefault());
 stage.addEventListener('auxclick', e => { if (e.button === 1) e.preventDefault(); });
 
 function resize() {
-  // 捲過影片後的一屏：檢視器連同下方操作提示填到視窗底部，留白與兩側內距相同
-  const st = stage.getBoundingClientRect(), hint = hintEl.getBoundingClientRect();
-  const mainTop = mainEl.getBoundingClientRect().top;
-  stage.style.height = Math.max(340, innerHeight - 32 - (st.top - mainTop) - (hint.bottom - st.bottom)) + 'px';
+  // 第一屏：標題下方的影片區填到視窗底部；往下捲一屏：說明、檢視器與操作提示填滿視窗。底部留白與兩側內距相同
+  const hero = heroEl.getBoundingClientRect();
+  heroEl.style.height = Math.max(240, innerHeight - 32 - (hero.top + scrollY)) + 'px';
+  const st = stage.getBoundingClientRect(), hint = hintEl.getBoundingClientRect(), intro = introEl.getBoundingClientRect();
+  stage.style.height = Math.max(340, innerHeight - 32 - 26 - (st.top - intro.top) - (hint.bottom - st.bottom)) + 'px';
   const w = stage.clientWidth, h = stage.clientHeight;
   if (!w || !h) return;
   renderer.setSize(w, h, false);
