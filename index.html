@@ -58,6 +58,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
+.hero{height:100vh;height:100svh;background:#000}
+.hero video{display:block;width:100%;height:100%;object-fit:cover}
 
 .gal{display:grid;gap:12px;margin:0 0 12px;align-items:start;
   grid-template-columns:repeat(auto-fill,minmax(max(180px,calc((100% - 84px)/8)),1fr))}
@@ -82,6 +84,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </style>
 </head>
 <body>
+<div class="hero"><video src="video/astra_architecture_60s.mp4" autoplay muted loop playsinline controls></video></div>
 <main>
 
 <h1>北投圖書館建模測試</h1>
@@ -213,11 +216,6 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </table>
 </div>
 
-<div class="gal">
-  <figure><img loading="lazy" src="images/method_markup.webp" alt="模型截圖上以紅筆圈註六處待修正位置並編號，右側列出對應之六條文字說明" style="width:100%;height:auto"><figcaption><b>本案模型修正指示</b>　截圖標註與對應文字</figcaption></figure>
-  <figure><img loading="lazy" src="images/method_office.webp" alt="事務所專案頻道之訊息畫面，附以藍筆標註之樓梯剖面圖、立面圖及現場照片" style="width:100%;height:auto"><figcaption><b>既有案件圖說指示</b>　新北市立圖書館第二總館</figcaption></figure>
-</div>
-
 <h2>來源</h2>
 <p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。</p>
 
@@ -246,6 +244,7 @@ const stage = document.getElementById('stage');
 const statusEl = document.getElementById('status');
 const layersEl = document.getElementById('layers');
 const hintEl = document.querySelector('.hint');
+const mainEl = document.querySelector('main');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -562,9 +561,10 @@ stage.addEventListener('contextmenu', e => e.preventDefault());
 stage.addEventListener('auxclick', e => { if (e.button === 1) e.preventDefault(); });
 
 function resize() {
-  // 首屏讓檢視器連同下方操作提示填到視窗底部，留白與兩側內距相同
+  // 捲過影片後的一屏：檢視器連同下方操作提示填到視窗底部，留白與兩側內距相同
   const st = stage.getBoundingClientRect(), hint = hintEl.getBoundingClientRect();
-  stage.style.height = Math.max(340, innerHeight - 32 - (st.top + scrollY) - (hint.bottom - st.bottom)) + 'px';
+  const mainTop = mainEl.getBoundingClientRect().top;
+  stage.style.height = Math.max(340, innerHeight - 32 - (st.top - mainTop) - (hint.bottom - st.bottom)) + 'px';
   const w = stage.clientWidth, h = stage.clientHeight;
   if (!w || !h) return;
   renderer.setSize(w, h, false);
