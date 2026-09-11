@@ -245,6 +245,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 const stage = document.getElementById('stage');
 const statusEl = document.getElementById('status');
 const layersEl = document.getElementById('layers');
+const hintEl = document.querySelector('.hint');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -561,6 +562,9 @@ stage.addEventListener('contextmenu', e => e.preventDefault());
 stage.addEventListener('auxclick', e => { if (e.button === 1) e.preventDefault(); });
 
 function resize() {
+  // 首屏讓檢視器連同下方操作提示填到視窗底部，留白與兩側內距相同
+  const st = stage.getBoundingClientRect(), hint = hintEl.getBoundingClientRect();
+  stage.style.height = Math.max(340, innerHeight - 32 - (st.top + scrollY) - (hint.bottom - st.bottom)) + 'px';
   const w = stage.clientWidth, h = stage.clientHeight;
   if (!w || !h) return;
   renderer.setSize(w, h, false);
@@ -767,6 +771,7 @@ function load(tag) {
     applyClip();
 
     buildLayers(current);
+    resize();
     setView('iso');
     renderer.shadowMap.needsUpdate = true;
     statusEl.hidden = true;
