@@ -75,6 +75,11 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .lb.zoom img{max-width:none;max-height:none}
 .lb figcaption{color:#efefef;font-size:13px;text-align:center}
 .lb .tip{color:#9a9a9a;font-size:12px}
+.lb .nav{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:72px;min-width:0;padding:0;border:none;
+  background:rgba(255,255,255,.14);color:#efefef;font-size:40px;line-height:1}
+.lb .nav:hover{background:rgba(255,255,255,.26)}
+#lbPrev{left:16px}
+#lbNext{right:16px}
 
 @media (max-width:640px){
   main{padding:20px 14px 52px}
@@ -126,8 +131,6 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 </tbody>
 </table>
 </div>
-<p class="note">適用範圍不含測繪、結構與法規檢核及施工圖說。</p>
-
 <h2>成果圖</h2>
 <p class="lead">五個版本以相同視點輸出，可逐項比對同一位置在各階段的差異。</p>
 
@@ -139,8 +142,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v1_north.webp" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v1_first.webp" alt="第一版一樓"><figcaption><b>一樓</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v1_second.webp" alt="第一版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_landing.webp" alt="第一版挑空"><figcaption><b>挑空</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v1_section.webp" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_landing.webp" alt="第一版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第二版（第一日）</h3>
@@ -151,8 +154,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v2_north.webp" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v2_first.webp" alt="第二版一樓"><figcaption><b>一樓</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v2_second.webp" alt="第二版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_landing.webp" alt="第二版挑空"><figcaption><b>挑空</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v2_section.webp" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_landing.webp" alt="第二版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第三版（第一日）</h3>
@@ -163,8 +166,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v3_north.webp" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v3_first.webp" alt="第三版一樓"><figcaption><b>一樓</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v3_second.webp" alt="第三版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_landing.webp" alt="第三版挑空"><figcaption><b>挑空</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v3_section.webp" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_landing.webp" alt="第三版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第四版（第二日）</h3>
@@ -175,8 +178,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v4_north.webp" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v4_first.webp" alt="第四版一樓"><figcaption><b>一樓</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v4_second.webp" alt="第四版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_landing.webp" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v4_section.webp" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_landing.webp" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第五版（第二日）</h3>
@@ -187,8 +190,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   <figure><img loading="lazy" src="images/v5_north.webp" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v5_first.webp" alt="第五版一樓"><figcaption><b>一樓</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v5_second.webp" alt="第五版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_landing.webp" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
   <figure><img loading="lazy" src="images/v5_section.webp" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h2>修正過程</h2>
@@ -220,7 +223,9 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <p class="note">公司作品庫照片 92 張、<a href="https://ws.moi.gov.tw/001/Upload/436/relfile/12414/218794/1ed43eee-ed08-4cb0-a1d2-25200363dd90.pdf" rel="noopener">內政部建研所《亞熱帶的綠建築挑戰》</a>圖說、<a href="https://bioarchformosana.wixsite.com/bioarch/blank-5" rel="noopener">九典官網</a>、<a href="https://forgemind.net/media/%E5%8F%B0%E5%8C%97%E5%B8%82%E7%AB%8B%E5%9C%96%E6%9B%B8%E9%A4%A8%E5%8C%97%E6%8A%95%E5%88%86%E9%A4%A8-%E4%B9%9D%E5%85%B8%E8%81%AF%E5%90%88%E5%BB%BA%E7%AF%89%E5%B8%AB%E4%BA%8B%E5%8B%99%E6%89%80/" rel="noopener">FAM 準建築人手札</a>、Google 地圖與街景。</p>
 
 <div class="lb" id="lb" hidden>
+  <button type="button" class="nav" id="lbPrev" aria-label="上一張">&lsaquo;</button>
   <img id="lbImg" alt="">
+  <button type="button" class="nav" id="lbNext" aria-label="下一張">&rsaquo;</button>
   <figcaption id="lbCap"></figcaption>
   <div class="tip">點圖片放大至原尺寸，點四周或按 Esc 關閉</div>
 </div>
@@ -575,6 +580,21 @@ function resize() {
 }
 addEventListener('resize', resize);
 
+// 看完影片往下捲一點就到檢視區：仍在第一屏內時，向下捲動直接捲到說明段頂端（與第二屏對齊）
+let snapping = false;
+addEventListener('wheel', e => {
+  // 畫布上的滾輪由 OrbitControls 處理（已 preventDefault），不介入
+  if (e.defaultPrevented || e.deltaY <= 0) return;
+  const target = introEl.getBoundingClientRect().top + scrollY - 26;
+  if (scrollY >= target - 1) return;
+  // 吸附進行中也要攔下後續滾輪事件，否則原生捲動會中斷平滑捲動
+  e.preventDefault();
+  if (snapping) return;
+  snapping = true;
+  scrollTo({ top: target, behavior: 'smooth' });
+  setTimeout(() => { snapping = false; }, 900);
+}, { passive: false });
+
 // 依模型整體尺度擺放主光並框定陰影範圍
 function setupSun(fullBox) {
   const c = fullBox.getCenter(new THREE.Vector3());
@@ -796,6 +816,9 @@ const lb = document.getElementById('lb');
 const lbImg = document.getElementById('lbImg');
 const lbCap = document.getElementById('lbCap');
 const lbTip = document.querySelector('.lb .tip');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+let lbIndex = -1;
 
 // 放大倍率相對於「符合視窗」時的寬度，來源解析度較低時仍會實際放大。
 // 該寬度由原始尺寸與視窗換算，不取當下渲染值，否則圖片尚未載完會量到 0。
@@ -821,7 +844,7 @@ function applyZoom() {
     lbImg.style.cursor = zoomStep === ZOOM.length - 1 ? 'zoom-out' : 'zoom-in';
   }
   lbTip.textContent = zoomStep === 0
-    ? '點圖片放大，點四周或按 Esc 關閉'
+    ? '點圖片放大，左右箭頭切換，點四周或按 Esc 關閉'
     : '目前 ' + ZOOM[zoomStep] + ' 倍，再點放大，最大後回到原狀';
 }
 
@@ -833,18 +856,11 @@ function closeLb() {
   lbImg.removeAttribute('src');
 }
 
-document.addEventListener('click', e => {
-  if (!lb.hidden) {
-    if (e.target === lbImg) {
-      zoomStep = (zoomStep + 1) % ZOOM.length;
-      applyZoom();
-    } else {
-      closeLb();
-    }
-    return;
-  }
-  const img = e.target.closest('.gal img');
-  if (!img) return;
+// 依成果圖在頁面中的順序顯示第 i 張，超出頭尾時循環
+function showLb(i) {
+  const imgs = document.querySelectorAll('.gal img');
+  lbIndex = (i + imgs.length) % imgs.length;
+  const img = imgs[lbIndex];
   lbImg.src = img.currentSrc || img.src;
   lbImg.alt = img.alt;
   const cap = img.closest('figure') && img.closest('figure').querySelector('figcaption');
@@ -854,12 +870,36 @@ document.addEventListener('click', e => {
   lbImg.style.width = '';
   lb.hidden = false;
   applyZoom();
+}
+
+document.addEventListener('click', e => {
+  if (!lb.hidden) {
+    if (e.target === lbImg) {
+      zoomStep = (zoomStep + 1) % ZOOM.length;
+      applyZoom();
+    } else if (e.target === lbPrev) {
+      showLb(lbIndex - 1);
+    } else if (e.target === lbNext) {
+      showLb(lbIndex + 1);
+    } else {
+      closeLb();
+    }
+    return;
+  }
+  const img = e.target.closest('.gal img');
+  if (!img) return;
+  showLb([...document.querySelectorAll('.gal img')].indexOf(img));
 });
 
 // 視窗改變大小時，放大後的寬度要跟著重算
 addEventListener('resize', () => { if (!lb.hidden && zoomStep) applyZoom(); });
 
-addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+addEventListener('keydown', e => {
+  if (lb.hidden) return;
+  if (e.key === 'Escape') closeLb();
+  else if (e.key === 'ArrowLeft') showLb(lbIndex - 1);
+  else if (e.key === 'ArrowRight') showLb(lbIndex + 1);
+});
 
 for (const btn of document.querySelectorAll('[data-view]')) {
   btn.addEventListener('click', () => setView(btn.dataset.view));
