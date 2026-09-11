@@ -11,7 +11,7 @@
 <script>
 // 版本檢查：GitHub Pages 與瀏覽器會快取十分鐘。開頁時向來源確認最新版本，不同就改用新網址重新載入，
 // 所有本地資源網址也帶版本號，確保不會拿到舊檔。版本號由 scripts/deploy_site.py 蓋上。
-var BUILD='20260911134224';
+var BUILD='20260911135606';
 (function(){
   var q = new URLSearchParams(location.search);
   fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function(r){ return r.text(); }).then(function(v){
@@ -69,6 +69,8 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 .layers{display:flex;flex-wrap:wrap;gap:4px 16px;padding:8px 10px;
   border-top:1px solid var(--line);background:var(--panel2);font-size:13px}
 .layers label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.layers input[type="checkbox"]{appearance:none;width:14px;height:14px;margin:0;border:1px solid var(--ink);background:#fff;position:relative;cursor:pointer}
+.layers input[type="checkbox"]:checked::after{content:"";position:absolute;left:3px;top:0;width:4px;height:8px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
 .hint{font-size:12px;color:var(--ink3);margin:0 0 8px}
 .hero{display:flex;align-items:center;justify-content:center;background:#fff;margin:0 0 40px}
 /* 影片元素尺寸由腳本設成剛好等於畫面。Windows Chrome 以硬體覆疊層播放影片時，會連解碼貼圖的對齊補白一起顯示，
@@ -106,7 +108,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 <main>
 
 <h1>北投圖書館建模測試</h1>
-<div class="hero"><video src="video/astra_architecture_60s.mp4?v=20260911134224" autoplay muted loop playsinline controls></video></div>
+<div class="hero"><video src="video/astra_architecture_60s.mp4?v=20260911135606" autoplay muted loop playsinline controls></video></div>
 <p class="lead" id="intro">本案於兩日內，僅以口述指示完成臺北市立圖書館北投分館之三維模型建置。過程中未進行任何繪圖或程式撰寫；指示方式與交辦事務所同仁相同——提出需求、檢視成果、指出待修正處，共歷五個版本。</p>
 
 <div class="viewer">
@@ -132,7 +134,7 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
   </div>
   <div class="layers" id="layers"></div>
 </div>
-<p class="hint">右鍵以游標所指處為中心環繞、中鍵轉頭、滾輪縮放；左鍵上下拖曳前進後退、左右拖曳轉向，點一下可將該處設為環繞中心。開啟「剖面框」後，左鍵改為拖曳框的任一面切割模型。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果，選擇東西南北時會自動關閉鄰棟與植栽以免遮擋。</p>
+<p class="hint">右鍵以游標所指處為中心環繞、Shift+右鍵平移、中鍵轉頭、滾輪縮放；左鍵上下拖曳前進後退、左右拖曳轉向，點一下可將該處設為環繞中心。開啟「剖面框」後，左鍵改為拖曳框的任一面切割模型。取消勾選「屋頂」「地形與周邊」可檢視室內。切換版本可比對各階段成果，選擇東西南北時會自動關閉鄰棟與植栽以免遮擋。</p>
 
 <h2>競圖提案階段之應用</h2>
 <div class="tw">
@@ -150,62 +152,62 @@ button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:
 
 <h3>第一版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v1_east.webp?v=20260911134224" alt="第一版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_west.webp?v=20260911134224" alt="第一版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_south.webp?v=20260911134224" alt="第一版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_north.webp?v=20260911134224" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_first.webp?v=20260911134224" alt="第一版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_second.webp?v=20260911134224" alt="第一版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_section.webp?v=20260911134224" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v1_landing.webp?v=20260911134224" alt="第一版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_east.webp?v=20260911135606" alt="第一版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_west.webp?v=20260911135606" alt="第一版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_south.webp?v=20260911135606" alt="第一版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_north.webp?v=20260911135606" alt="第一版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_first.webp?v=20260911135606" alt="第一版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_second.webp?v=20260911135606" alt="第一版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_section.webp?v=20260911135606" alt="第一版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v1_landing.webp?v=20260911135606" alt="第一版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第二版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v2_east.webp?v=20260911134224" alt="第二版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_west.webp?v=20260911134224" alt="第二版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_south.webp?v=20260911134224" alt="第二版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_north.webp?v=20260911134224" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_first.webp?v=20260911134224" alt="第二版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_second.webp?v=20260911134224" alt="第二版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_section.webp?v=20260911134224" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v2_landing.webp?v=20260911134224" alt="第二版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_east.webp?v=20260911135606" alt="第二版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_west.webp?v=20260911135606" alt="第二版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_south.webp?v=20260911135606" alt="第二版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_north.webp?v=20260911135606" alt="第二版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_first.webp?v=20260911135606" alt="第二版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_second.webp?v=20260911135606" alt="第二版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_section.webp?v=20260911135606" alt="第二版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v2_landing.webp?v=20260911135606" alt="第二版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第三版（第一日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v3_east.webp?v=20260911134224" alt="第三版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_west.webp?v=20260911134224" alt="第三版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_south.webp?v=20260911134224" alt="第三版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_north.webp?v=20260911134224" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_first.webp?v=20260911134224" alt="第三版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_second.webp?v=20260911134224" alt="第三版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_section.webp?v=20260911134224" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v3_landing.webp?v=20260911134224" alt="第三版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_east.webp?v=20260911135606" alt="第三版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_west.webp?v=20260911135606" alt="第三版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_south.webp?v=20260911135606" alt="第三版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_north.webp?v=20260911135606" alt="第三版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_first.webp?v=20260911135606" alt="第三版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_second.webp?v=20260911135606" alt="第三版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_section.webp?v=20260911135606" alt="第三版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v3_landing.webp?v=20260911135606" alt="第三版閱覽區"><figcaption><b>閱覽區</b></figcaption></figure>
 </div>
 
 <h3>第四版（第二日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v4_east.webp?v=20260911134224" alt="第四版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_west.webp?v=20260911134224" alt="第四版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_south.webp?v=20260911134224" alt="第四版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_north.webp?v=20260911134224" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_first.webp?v=20260911134224" alt="第四版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_second.webp?v=20260911134224" alt="第四版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_section.webp?v=20260911134224" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v4_landing.webp?v=20260911134224" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_east.webp?v=20260911135606" alt="第四版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_west.webp?v=20260911135606" alt="第四版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_south.webp?v=20260911135606" alt="第四版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_north.webp?v=20260911135606" alt="第四版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_first.webp?v=20260911135606" alt="第四版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_second.webp?v=20260911135606" alt="第四版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_section.webp?v=20260911135606" alt="第四版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v4_landing.webp?v=20260911135606" alt="第四版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h3>第五版（第二日）</h3>
 <div class="gal">
-  <figure><img loading="lazy" src="images/v5_east.webp?v=20260911134224" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_west.webp?v=20260911134224" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_south.webp?v=20260911134224" alt="第五版南向"><figcaption><b>南向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_north.webp?v=20260911134224" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_first.webp?v=20260911134224" alt="第五版一樓"><figcaption><b>一樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_second.webp?v=20260911134224" alt="第五版二樓"><figcaption><b>二樓</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_section.webp?v=20260911134224" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
-  <figure><img loading="lazy" src="images/v5_landing.webp?v=20260911134224" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_east.webp?v=20260911135606" alt="第五版東向"><figcaption><b>東向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_west.webp?v=20260911135606" alt="第五版西向"><figcaption><b>西向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_south.webp?v=20260911135606" alt="第五版南向"><figcaption><b>南向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_north.webp?v=20260911135606" alt="第五版北向"><figcaption><b>北向</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_first.webp?v=20260911135606" alt="第五版一樓"><figcaption><b>一樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_second.webp?v=20260911135606" alt="第五版二樓"><figcaption><b>二樓</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_section.webp?v=20260911135606" alt="第五版剖面"><figcaption><b>剖面</b></figcaption></figure>
+  <figure><img loading="lazy" src="images/v5_landing.webp?v=20260911135606" alt="第五版挑空"><figcaption><b>挑空</b></figcaption></figure>
 </div>
 
 <h2>修正過程</h2>
@@ -296,11 +298,12 @@ const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 4000);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
-// 滾輪縮放交給 OrbitControls；左鍵步行、右鍵環繞、中鍵轉頭與剖面框拖曳都在下方自行處理
+// 滾輪縮放與 Shift+右鍵平移交給 OrbitControls（RIGHT 設為 ROTATE 時，按住 Shift 即為平移）；
+// 單純右鍵環繞、左鍵步行、中鍵轉頭與剖面框拖曳都在下方攔下自行處理
 controls.mouseButtons = {
   LEFT: null,
   MIDDLE: null,
-  RIGHT: null,
+  RIGHT: THREE.MOUSE.ROTATE,
 };
 
 const draco = new DRACOLoader();
@@ -428,7 +431,7 @@ clipResetBtn.addEventListener('click', () => {
 
 // 滑鼠操作：
 //   左鍵  上下拖曳沿視線方向水平前進後退、左右拖曳轉向（步行）；開啟剖面框時在框面上拖曳則切割；點一下以該處為環繞中心
-//   右鍵  以按下時游標所指的模型位置為中心環繞，該點在畫面上保持不動；指到天空則沿用目前中心
+//   右鍵  以按下時游標所指的模型位置為中心環繞，該點在畫面上保持不動；指到天空則沿用目前中心；Shift+右鍵平移
 //   中鍵  轉頭，相機位置不動只改變視線方向
 // 事件掛在 stage 的捕獲階段，才能在 OrbitControls 之前攔下要自行處理的操作。
 const ray = new THREE.Raycaster();
@@ -500,7 +503,7 @@ stage.addEventListener('pointerdown', e => {
     e.stopPropagation();
     return;
   }
-  if (e.button === 2) {                       // 右鍵環繞：中心為游標所指處
+  if (e.button === 2 && !(e.shiftKey || e.ctrlKey || e.metaKey)) {   // 右鍵環繞：中心為游標所指處；Shift+右鍵放給 OrbitControls 平移
     const hit = pickModel(e);
     const pivot = hit ? hit.point.clone() : controls.target.clone();
     const fwd = camera.getWorldDirection(new THREE.Vector3());
