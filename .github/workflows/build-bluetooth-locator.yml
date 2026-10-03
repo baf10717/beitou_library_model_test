@@ -25,7 +25,11 @@ jobs:
 
       - name: Install Android SDK components
         run: |
-          SDKMANAGER=/usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMANAGER=$(find "$SDKROOT" -type f -name sdkmanager 2>/dev/null | sort -V | tail -n 1)
+          echo "sdkmanager=$SDKMANAGER"
+          test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
 
